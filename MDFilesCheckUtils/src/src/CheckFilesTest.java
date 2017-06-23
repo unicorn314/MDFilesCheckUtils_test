@@ -8,6 +8,7 @@ import static org.hamcrest.number.OrderingComparison.greaterThan;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -20,12 +21,12 @@ public class CheckFilesTest {
     /**
      * .
      */
-    @Test
+    /*@Test
     public void testSearchFile() {
         File file = new File("E:/OPEN-O");
-        File[] files = check.searchFile(file);
-        assertThat(files, isA(File[].class));
-    }
+        List<File> files = check.searchFile(file);
+        assertThat(files, isA(ArrayList<File>.class));
+    }*/
 
     /**
      * .

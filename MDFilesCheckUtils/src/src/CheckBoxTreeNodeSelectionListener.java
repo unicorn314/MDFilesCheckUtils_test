@@ -52,7 +52,7 @@ public class CheckBoxTreeNodeSelectionListener extends MouseAdapter {
      * @param root 根节点
      * @param lst 存放所有被选择节点的集合
      */
-    private void getSelectedNodes (TreeNode root,List lst) {  
+    public void getSelectedNodes (TreeNode root,List lst) {  
         if(root.getChildCount() > 0){  
               for (Enumeration e = root.children(); e.hasMoreElements();) {  
                   CheckBoxTreeNode n = (CheckBoxTreeNode) e.nextElement();  
@@ -72,4 +72,5 @@ public class CheckBoxTreeNodeSelectionListener extends MouseAdapter {
         System.out.println();
         
     }
+    
 }

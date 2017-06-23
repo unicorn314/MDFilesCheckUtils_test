@@ -6,6 +6,8 @@ import java.awt.Font;
 import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -37,15 +39,20 @@ import javax.swing.JTextArea;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import javax.swing.tree.DefaultTreeModel;
 
+import model.ListYml;
 import model.MyURL;
+import model.NodeObj;
+import tools.CheckBoxTreeNodeUtils;
 import tools.HttpLinkChecker;
+import tools.ListYamlReadUtils;
 import tools.TitleChecker;
 import tools.WrongPathChecker;
 
 /**
  * 低检工具主类.
- * @author 123
+ * @author SunYichuan
  *
  */
 public class CheckFiles {
@@ -73,7 +80,22 @@ public class CheckFiles {
      * 存放最终输出结果的字符串.
      */
     private String resultStr = "";
+    /**
+     * 存放配置文件中读取的页面列表对象集合
+     */
+    private List<ListYml> ymlList = new ArrayList<ListYml>();
+    /**
+     * 存放树形图中已勾选对象的集合
+     */
+    private List<NodeObj> nodeObjList = new ArrayList<NodeObj>();
 
+    public List<NodeObj> getNodeObjList() {
+        return nodeObjList;
+    }
+
+    public void setNodeObjList(List<NodeObj> nodeObjList) {
+        this.nodeObjList = nodeObjList;
+    }
 
     /**
      * 默认构造方法，所有窗口组件初始化
@@ -130,36 +152,26 @@ public class CheckFiles {
      * @param folder 指定搜索的文件夹
      * @return 所有的文件数组
      */
-    public File[] searchFile(final File folder) {
+    public List<File> searchFile(final File folder) {
         try {
             File[] subFolders = folder.listFiles();
             List<File> result = new ArrayList<File>(); // 声明一个集合
             for (int i = 0; i < subFolders.length; i++) { // 循环显示文件夹或文件
-                if (subFolders[i].isFile()) { // 如果是文件,下一步判断
-                    if (subFolders[i].getName()
-                            .toLowerCase().endsWith(".md")
-                            || subFolders[i].getName()
-                            .toLowerCase()
-                            .endsWith(".yml")) {
-                        // 如果是.md文件，则将结果加入列表，否则不做处理
-                        result.add(subFolders[i]);
-                    }
+                if (subFolders[i].isFile()) { // 如果是文件,加入列表
+                    result.add(subFolders[i]);
                 } else { // 如果是文件夹，则递归调用本方法，然后把所有的文件加到结果列表中
-                    File[] foldResult = searchFile(subFolders[i]);
+                    List<File> foldResult = searchFile(subFolders[i]);
                     // 循环显示文件
-                    for (int j = 0; j < foldResult.length; j++) {
-                        result.add(foldResult[j]); // 文件保存到集合中
+                    for (int j = 0; j < foldResult.size(); j++) {
+                        result.add(foldResult.get(j)); // 文件保存到集合中
                     }
                 }
             }
-            File[] files = new File[result.size()]; // 声明文件数组，长度为集合的长度
-            result.toArray(files); // 集合数组化
-            return files;
+            return result;
         } catch (NullPointerException e) {
             e.printStackTrace();
             return null;
         }
-
     }
 
     /**
@@ -294,20 +306,36 @@ public class CheckFiles {
                 + folder.getAbsolutePath() + "\r\n";
             return;
         }
-        File[] result = searchFile(folder); // 调用方法获得文件数组
+        List<File> result = searchFile(folder); // 调用方法获得文件数组
         resultStr = resultStr + "在 " + folder
                 + " 以及所有子文件时查找对象.md文件及.yml文件" + "\r\n";
         ProGressWork work = new ProGressWork(result,rootPath);
-        // 监听器，当值变化时同步更新进度条
-        /*work.addPropertyChangeListener(new PropertyChangeListener(){
-            @Override  
-            public void propertyChange(PropertyChangeEvent evt) {
-                if ("progress".equals(evt.getPropertyName())) {
-                    jpb.setValue((Integer)evt.getNewValue());
-                }
-            }
-        });*/
         work.execute();
+    }
+    /**
+     * 生成窗口主页面中的树形图
+     * @param index 下拉框的被选中项
+     */
+    public void createTree (int index) {
+        scrollPane.remove(tree);
+        
+        CheckBoxTreeNodeUtils nodeUtils = new CheckBoxTreeNodeUtils();
+        List<CheckBoxTreeNode> treeNodeList = new ArrayList<CheckBoxTreeNode>();
+        nodeUtils.createTreeNodes(ymlList, treeNodeList);
+        
+        tree = new JTree();
+        tree.addMouseListener(new CheckBoxTreeNodeSelectionListener());
+        DefaultTreeModel model = new DefaultTreeModel(treeNodeList.get(index));
+        tree.setModel(model);
+        tree.setCellRenderer(new CheckBoxTreeCellRenderer());
+//        scrollPane.add(tree);
+//        scrollPane = new JScrollPane(tree);
+
+        scrollPane.setViewportView(tree);
+        comboBox.setSelectedIndex(comboBoxSelectIndex);
+        scrollPane.setColumnHeaderView(comboBox);
+        frame.add(scrollPane, BorderLayout.CENTER);
+        scrollPane.validate();
     }
 
 	final int tWidth = 0;
@@ -321,32 +349,51 @@ public class CheckFiles {
 	final JProgressBar jpb = new JProgressBar();
 	JTextArea textArea = new JTextArea(tWidth, tHeight);
 	
-	private final JComboBox comboBox = new JComboBox();
-    private final JTree tree = new JTree();
+	private JComboBox comboBox = new JComboBox();
+//    private final JTree tree = new JTree();
     private final JButton btnHtmlToPdf = new JButton("html to pdf");
 
 	// 文件选择按钮
 	final JButton selectFileButton = new JButton("select file");
+	// 确认按钮
+	final JButton createTreeButton = new JButton("create tree");
 	// 开始检测按钮
 	final JButton checkButton = new JButton("start check");
 
+	JScrollPane scrollPane = new JScrollPane();
+	JTree tree = new JTree();
+	
+	// 下拉框当前选择的第几个选项
+	int comboBoxSelectIndex = 0;
 	/**
 	 * 窗口组件初始化
 	 */
 	private void init() {
+	    comboBox.addItemListener(new ItemListener(){
+            public void itemStateChanged(ItemEvent e){
+                if( e.getStateChange() == ItemEvent.SELECTED ) {
+                    comboBoxSelectIndex = comboBox.getSelectedIndex();
+                 // 生成树形图
+                    createTree(comboBoxSelectIndex);
+                    System.out.println(comboBoxSelectIndex);
+                }
+            }
+        });
+	    
+	    DefaultTreeModel model = new DefaultTreeModel(new CheckBoxTreeNode());
+	    tree.setModel(model);
+	    
 		frame.setSize(fWidth, fHeight);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setTitle("低检工具");
 		frame.setLayout(new BorderLayout());
 
-		// 主窗口center部分（中间结果显示文本域）
-		textArea.setFont(new Font("黑体", Font.BOLD, fontSize));
-		textArea.setLineWrap(true);
-		JScrollPane scrollPane = new JScrollPane(textArea);
+		// 主窗口center部分（中间的下拉框和树形图）
+//		textArea.setFont(new Font("黑体", Font.BOLD, fontSize));
+//		textArea.setLineWrap(true);
+//		scrollPane.setColumnHeaderView(comboBox);
 		frame.add(scrollPane, BorderLayout.CENTER);
 
-		scrollPane.setColumnHeaderView(comboBox);
-        scrollPane.setRowHeaderView(tree);
         
 		// 文件夹路径显示框
 		final TextField rootFolderTextField = new TextField(50);
@@ -387,10 +434,86 @@ public class CheckFiles {
 			}
 		});
 
+		// "create tree"按钮添加点击生成页面列表事件
+		createTreeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (rootFolderTextField.getText() != null
+                        && !"".equals(rootFolderTextField.getText())) {
+                    // 如果已经选择过文件夹，开始生成页面列表
+                    ListYamlReadUtils util = new ListYamlReadUtils();
+                    List<File> fileList = searchFile(new File(rootFolderTextField.getText()+"\\_data"));
+                    ymlList = new ArrayList<ListYml>();
+                    for (File f : fileList) {
+                        if (util.ymlToObject(f)!=null
+                                && util.ymlToObject(f).getBigheader() != null){
+                            ymlList.add(util.ymlToObject(f));                            
+                        }
+                    }
+                    // 填充下拉框
+                    comboBox.removeAllItems();
+                    String[] comboBoxTitle = new String[ymlList.size()];
+                    for (int i = 0; i < ymlList.size(); i++) {
+                        comboBox.addItem(ymlList.get(i).getBigheader());
+                    }
+                    
+                    
+                } else {
+                    // 如果还没有选择过文件夹，弹出提示窗口
+                    JOptionPane.showMessageDialog(null, "请选择项目根路径!");
+                }
+            }
+        });
+		// "html to pdf"按钮添加点击事件
+		btnHtmlToPdf.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (rootFolderTextField.getText() != null
+                        && !"".equals(rootFolderTextField.getText())) {
+                    try {
+                        List<NodeObj> list = new ArrayList<NodeObj>();
+                        CheckBoxTreeNode root = (CheckBoxTreeNode) tree
+                                .getPathForRow(tree.getRowForLocation(0, 0)).getLastPathComponent();
+                        CheckBoxTreeNodeSelectionListener listener = new CheckBoxTreeNodeSelectionListener();
+                        // 获得所有已勾选节点
+                        listener.getSelectedNodes(root, list);
+                        String createPdf = "wkhtmltopdf toc ";
+                        for (NodeObj nodeobj : list) {
+                            if (nodeobj.getPath() != null && !nodeobj.equals("")){
+                                String str = nodeobj.getPath()
+                                        .replace(rootFolderTextField.getText(), "")
+                                        .replace("\\", "/")
+                                        .replace(".md", ".html");
+                                str = "localhost:4000" + str;
+                                createPdf = createPdf + str + " ";
+                            }
+                        }
+                        // pdf文件名加上时间戳
+                        createPdf = createPdf + " " + rootFolderTextField.getText()
+                                + "\\htmlToPdf" + System.currentTimeMillis() + ".pdf";
+                        // 将转换命令保存到txt文件中
+                        PrintStream mytxt = new PrintStream("./htmlToPdf.txt");
+                        PrintStream out = System.out;
+                        System.setOut(mytxt);
+                        System.out.println(createPdf);
+                        System.setOut(out);
+                        mytxt.close();
+                        out.close();
+                    } catch (FileNotFoundException exception) {
+                        exception.printStackTrace();
+                    }
+                    // 弹出窗口提示检查完成，并提示日志位置
+                    JOptionPane.showMessageDialog(null, "生成pdf命令已保存在本地目录下的htmlToPdf.txt中。");
+                } else {
+                    // 如果还没有选择过文件夹，弹出提示窗口
+                    JOptionPane.showMessageDialog(null, "请选择项目根路径!");
+                }
+            }
+        });
 		// 主窗口north部分按钮功能（顶部"select file"按钮及文件夹路径显示框）
 		JPanel northPanle = new JPanel();
 		rootFolderTextField.setEditable(false);
+		createTreeButton.setMaximumSize(new Dimension(90, 30));
 		selectFileButton.setMaximumSize(new Dimension(90, 30));
+		northPanle.add(createTreeButton);
 		northPanle.add(selectFileButton);
 		northPanle.add(rootFolderTextField);
 		frame.add(northPanle, BorderLayout.NORTH);
@@ -449,9 +572,9 @@ public class CheckFiles {
 		private List<File> result;
 		private String rootPath;
 
-		public ProGressWork(File[] files, String path) {
+		public ProGressWork(List<File> files, String path) {
 			super();
-			result = Arrays.asList(files);
+			result = files;
 			rootPath = path;
 		}
 

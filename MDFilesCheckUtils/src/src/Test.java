@@ -3,6 +3,7 @@ package src;
 import java.awt.BorderLayout;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -12,7 +13,6 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeModel;
 
 import model.ListYml;
-
 import tools.CheckBoxTreeNodeUtils;
 import tools.ListYamlReadUtils;
 
@@ -20,9 +20,10 @@ public class Test {
 
 	
     public static void main(String[] args) {
+        System.out.println(System.currentTimeMillis());
 //		System.out.println("- /doc/home.md".matches("\\-\\s[\\S]*"));
 //		System.out.println("../"+"  path: https://github.com/guodongxiaren/README".replace("  path: ", ""));
-    	ListYamlReadUtils util = new ListYamlReadUtils();
+    	/*ListYamlReadUtils util = new ListYamlReadUtils();
     	List<ListYml> ymlList = new ArrayList<ListYml>();
     	ymlList.add(util.ymlToObject(new File("E:\\Github\\pnpdjie.github.io\\_data\\guides.yml")));
     	ymlList.add(util.ymlToObject(new File("E:\\Github\\pnpdjie.github.io\\_data\\docs-home.yml")));
@@ -36,9 +37,6 @@ public class Test {
         frame.setBounds(200, 200, 400, 400);
         JTree tree = new JTree();
         tree.addMouseListener(new CheckBoxTreeNodeSelectionListener());
-        for (CheckBoxTreeNode node : treeNodeList) {
-            
-        }
         DefaultTreeModel model = new DefaultTreeModel(treeNodeList.get(0));
         tree.setModel(model);
         tree.setCellRenderer(new CheckBoxTreeCellRenderer());
@@ -52,7 +50,7 @@ public class Test {
         frame.getContentPane().add(scroll);
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
+        frame.setVisible(true);*/
     	
     	/*try {
     		String encoding = "UTF-8";  

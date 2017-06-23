@@ -1,0 +1,18 @@
+
+以下为失效链接：
+文件路径：E:\OPEN-O\新建文件夹\JUnitTest.md        链接地址：http://www.baidu.edu
+
+以下为错误include标签引用路径：
+文件路径：E:\OPEN-O\新建文件夹\JUnitTest.md        引用路径：templates/home.md
+
+以下为错误内部引用路径：
+文件路径：E:\OPEN-O\新建文件夹\JUnitTest.md        引用路径：home1.md
+
+以下为字符编码不正确的文件：
+文件路径：E:\OPEN-O\新建文件夹\ASCII.md        编码格式：ASCII
+文件路径：E:\OPEN-O\新建文件夹\home.md        编码格式：UTF-8,UTF-16LE,GB18030,UTF-16BE,Big5,windows-1252
+文件路径：E:\OPEN-O\新建文件夹\JUnitTest.md        编码格式：UTF-8,Shift_JIS
+
+以下为title部分格式不正确的文件：
+文件路径：E:\OPEN-O\新建文件夹\JUnitTest.md
+

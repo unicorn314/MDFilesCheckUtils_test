@@ -34,7 +34,8 @@ public class CheckBoxTreeNodeSelectionListener extends MouseAdapter {
         if (path != null) {
             CheckBoxTreeNode node = (CheckBoxTreeNode) path.getLastPathComponent();
             if (node != null) {
-                node.setSelected(!node.isSelected());
+                String type =R.SUBNODES_AND_PARENT;
+                node.setSelected(!node.isSelected(),type);
                 ((DefaultTreeModel) tree.getModel()).nodeStructureChanged(node);
             }
         }

@@ -2,6 +2,7 @@ package src;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.TextField;
 import java.awt.event.ActionEvent;
@@ -190,17 +191,11 @@ public class PublishPane extends JPanel {
       }
     });
     // 主窗口north部分按钮功能（顶部"select file"按钮及文件夹路径显示框）
-    JPanel northPanle = new JPanel();
+    JPanel northPanle = new JPanel(new FlowLayout(FlowLayout.LEFT));
     createTreeButton.setMaximumSize(new Dimension(90, 30));
     northPanle.add(createTreeButton);
+    northPanle.add(btnHtmlToPdf);
     add(northPanle, BorderLayout.NORTH);
-
-    // 主窗口south部分（底部按钮及进度条）
-    JPanel southPanel = new JPanel();
-
-    southPanel.add(btnHtmlToPdf);
-
-    add(southPanel, BorderLayout.SOUTH);
 
   }
 
@@ -231,20 +226,20 @@ public class PublishPane extends JPanel {
     centerPanel.setLayout(null);
 
     // 生成下拉框
-    comboBox.setBounds(149, 13, 590, 24);
+    comboBox.setBounds(5, 13, 590, 24);
     centerPanel.add(comboBox);
 
     // 生成多选框
-    chckbxSelectAll.setBounds(143, 46, 133, 27);
+    chckbxSelectAll.setBounds(5, 46, 133, 27);
     centerPanel.add(chckbxSelectAll);
 
-    chckbxSelectParent.setBounds(274, 46, 156, 27);
+    chckbxSelectParent.setBounds(136, 46, 130, 27);
     centerPanel.add(chckbxSelectParent);
 
-    chckbxSelectChildren.setBounds(436, 46, 163, 27);
+    chckbxSelectChildren.setBounds(277, 46, 163, 27);
     centerPanel.add(chckbxSelectChildren);
 
-    scrollPane.setBounds(153, 82, 590, 349);
+    scrollPane.setBounds(5, 82, 590, 349);
     centerPanel.add(scrollPane);
 
     // 生成树形图

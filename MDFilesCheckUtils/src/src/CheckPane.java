@@ -2,6 +2,7 @@ package src;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.Closeable;
@@ -55,7 +56,7 @@ public class CheckPane extends JPanel {
   JScrollPane scrollPane = new JScrollPane();
   final JLabel label = new JLabel();
   final JProgressBar jpb = new JProgressBar();
-  JTextArea textArea = new JTextArea(tWidth, tHeight);
+  JTextArea textArea = new JTextArea();
   JPanel centerPanel = new JPanel();
 
   /**
@@ -95,8 +96,11 @@ public class CheckPane extends JPanel {
 
     setSize(fWidth, fHeight);
     setLayout(new BorderLayout());
-
-    add(textArea, BorderLayout.CENTER);
+    textArea.setLineWrap(true);        //激活自动换行功能 
+    textArea.setWrapStyleWord(true);            // 激活断行不断字功能
+    scrollPane.setViewportView(textArea);
+    scrollPane.validate();
+    add(scrollPane, BorderLayout.CENTER);
 
     // "start check"按钮添加点击开始扫描文件夹事件
     checkButton.addActionListener(new ActionListener() {
@@ -115,12 +119,12 @@ public class CheckPane extends JPanel {
     });
 
     // 主窗口south部分（底部按钮及进度条）
-    JPanel southPanel = new JPanel();
+    JPanel southPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     checkButton.setMaximumSize(new Dimension(90, 30));
     southPanel.add(checkButton);
     southPanel.add(jpb);
     southPanel.add(label);
-    add(southPanel, BorderLayout.SOUTH);
+    add(southPanel, BorderLayout.NORTH);
   }
 
   /**

@@ -590,14 +590,14 @@ public class CheckFiles {
 	 * 
 	 * @param args ...
 	 */
-	public static void main(final String[] args) { // java程序的主入口处
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				new CheckFiles();
-			}
-		});
-	}
+//	public static void main(final String[] args) { // java程序的主入口处
+//		SwingUtilities.invokeLater(new Runnable() {
+//			@Override
+//			public void run() {
+//				new CheckFiles();
+//			}
+//		});
+//	}
 
 	/**
 	 * 线程类.

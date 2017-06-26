@@ -38,6 +38,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
@@ -62,6 +63,10 @@ import tools.WrongPathChecker;
  *
  */
 public class CheckFiles {
+  /**
+   * 存放选项卡的组件.
+   */
+  private JTabbedPane jTabbedpane = new JTabbedPane();
     /**
      * 存放所有失效的引用链接.
      */

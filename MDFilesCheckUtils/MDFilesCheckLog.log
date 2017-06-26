@@ -1,18 +1,90 @@
+在 D:\git\pnpdjie.github.io\docs 以及所有子文件时查找对象.md文件及.yml文件
 
 以下为失效链接：
-文件路径：E:\OPEN-O\新建文件夹\JUnitTest.md        链接地址：http://www.baidu.edu
+文件路径：D:\git\pnpdjie.github.io\docs\guides\jekyll\windows_setup.md        链接地址：http://rnd-mirrors.huawei.com/rubygems/。
+文件路径：D:\git\pnpdjie.github.io\docs\guides\jekyll\windows_setup.md        链接地址：http://rnd-mirrors.huawei.com/rubygems/
 
 以下为错误include标签引用路径：
-文件路径：E:\OPEN-O\新建文件夹\JUnitTest.md        引用路径：templates/home.md
+文件路径：D:\git\pnpdjie.github.io\docs\guides\generator\template-generator-guides.md        引用路径：templates/home.md
+文件路径：D:\git\pnpdjie.github.io\docs\guides\generator\template-generator-install.md        引用路径：templates/home.md
+文件路径：D:\git\pnpdjie.github.io\docs\guides\jekyll\create-new-page.md        引用路径：templates/home.md
+文件路径：D:\git\pnpdjie.github.io\docs\guides\jekyll\create-new-page.md        引用路径：templates/home.md
+文件路径：D:\git\pnpdjie.github.io\docs\guides\jekyll\create-new-page.md        引用路径：templates/home.md
+文件路径：D:\git\pnpdjie.github.io\docs\guides\jekyll\install-jekyll-in-linux.md        引用路径：templates/home.md
+文件路径：D:\git\pnpdjie.github.io\docs\guides\jekyll\page-layout-configuration.md        引用路径：templates/home.md
+文件路径：D:\git\pnpdjie.github.io\docs\guides\jekyll\windows_setup.md        引用路径：templates/home.md
+文件路径：D:\git\pnpdjie.github.io\docs\guides\markdown\add-links-into-picture.md        引用路径：templates/home.md
+文件路径：D:\git\pnpdjie.github.io\docs\guides\markdown\choose.md        引用路径：templates/home.md
+文件路径：D:\git\pnpdjie.github.io\docs\guides\markdown\hyperlink.md        引用路径：templates/home.md
+文件路径：D:\git\pnpdjie.github.io\docs\guides\markdown\icons.md        引用路径：templates/home.md
+文件路径：D:\git\pnpdjie.github.io\docs\guides\markdown\show-media.md        引用路径：templates/home.md
+文件路径：D:\git\pnpdjie.github.io\docs\guides\markdown\show-pages.md        引用路径：templates/test.md
+文件路径：D:\git\pnpdjie.github.io\docs\guides\markdown\show-pages.md        引用路径：templates/test.md
+文件路径：D:\git\pnpdjie.github.io\docs\guides\markdown\show-pages.md        引用路径：templates/home.md
+文件路径：D:\git\pnpdjie.github.io\docs\guides\markdown\show-pictures.md        引用路径：templates/home.md
+文件路径：D:\git\pnpdjie.github.io\docs\guides\markdown\show-tables.md        引用路径：templates/home.md
+文件路径：D:\git\pnpdjie.github.io\docs\guides\markdown\tooltips.md        引用路径：templates/home.md
+文件路径：D:\git\pnpdjie.github.io\docs\guides\markdown\workflow.md        引用路径：templates/home.md
+文件路径：D:\git\pnpdjie.github.io\docs\guides\workflow\complex\sample10.md        引用路径：templates/home.md
+文件路径：D:\git\pnpdjie.github.io\docs\guides\workflow\complex\sample11.md        引用路径：templates/home.md
+文件路径：D:\git\pnpdjie.github.io\docs\guides\workflow\complex\sample12.md        引用路径：templates/home.md
+文件路径：D:\git\pnpdjie.github.io\docs\guides\workflow\complex\sample13.md        引用路径：templates/home.md
+文件路径：D:\git\pnpdjie.github.io\docs\guides\workflow\complex\sample14.md        引用路径：templates/home.md
+文件路径：D:\git\pnpdjie.github.io\docs\guides\workflow\complex\sample6.md        引用路径：templates/home.md
+文件路径：D:\git\pnpdjie.github.io\docs\guides\workflow\complex\sample7.md        引用路径：templates/home.md
+文件路径：D:\git\pnpdjie.github.io\docs\guides\workflow\complex\sample8.md        引用路径：templates/home.md
+文件路径：D:\git\pnpdjie.github.io\docs\guides\workflow\complex\sample9.md        引用路径：templates/home.md
+文件路径：D:\git\pnpdjie.github.io\docs\guides\workflow\simple\sample1.md        引用路径：templates/home.md
+文件路径：D:\git\pnpdjie.github.io\docs\guides\workflow\simple\sample2.md        引用路径：templates/home.md
+文件路径：D:\git\pnpdjie.github.io\docs\guides\workflow\simple\sample3.md        引用路径：templates/home.md
+文件路径：D:\git\pnpdjie.github.io\docs\guides\workflow\simple\sample4.md        引用路径：templates/home.md
+文件路径：D:\git\pnpdjie.github.io\docs\guides\workflow\simple\sample5.md        引用路径：templates/home.md
+文件路径：D:\git\pnpdjie.github.io\docs\test\index.md        引用路径：templates/home.md
+文件路径：D:\git\pnpdjie.github.io\docs\test\test1.md        引用路径：templates/home.md
+文件路径：D:\git\pnpdjie.github.io\docs\test\test1.md        引用路径：templates/home.md
+文件路径：D:\git\pnpdjie.github.io\docs\test\test1.md        引用路径：templates/home.md
+文件路径：D:\git\pnpdjie.github.io\docs\test\test2.md        引用路径：templates/home.md
+文件路径：D:\git\pnpdjie.github.io\docs\test\test3.md        引用路径：templates/home.md
 
 以下为错误内部引用路径：
-文件路径：E:\OPEN-O\新建文件夹\JUnitTest.md        引用路径：home1.md
+文件路径：D:\git\pnpdjie.github.io\docs\guides\generator\template-generator-guides.md        引用路径：/images/docs/guides/generator/template-generator-launcher.png
+文件路径：D:\git\pnpdjie.github.io\docs\guides\generator\template-generator-guides.md        引用路径：/images/docs/guides/generator/template-generator-main.png
+文件路径：D:\git\pnpdjie.github.io\docs\guides\generator\template-generator-guides.md        引用路径：/images/docs/guides/generator/template-generator-menu-create.png
+文件路径：D:\git\pnpdjie.github.io\docs\guides\generator\template-generator-guides.md        引用路径：/images/docs/guides/generator/template-generator-menu-switch.png
+文件路径：D:\git\pnpdjie.github.io\docs\guides\generator\template-generator-guides.md        引用路径：/images/docs/guides/generator/template-generator-create-menu-confirm.png
+文件路径：D:\git\pnpdjie.github.io\docs\guides\generator\template-generator-guides.md        引用路径：/images/docs/guides/generator/template-generator-create-menu-progress.png
+文件路径：D:\git\pnpdjie.github.io\docs\guides\generator\template-generator-guides.md        引用路径：/images/docs/guides/generator/template-generator-create-menutype.png
+文件路径：D:\git\pnpdjie.github.io\docs\guides\generator\template-generator-guides.md        引用路径：/images/docs/guides/generator/template-generator-create-menutype-input.png
+文件路径：D:\git\pnpdjie.github.io\docs\guides\generator\template-generator-guides.md        引用路径：/images/docs/guides/generator/template-generator-create-menutype-progress.png
+文件路径：D:\git\pnpdjie.github.io\docs\guides\generator\template-generator-guides.md        引用路径：/images/docs/guides/generator/template-generator-create-menutype-success.png
+文件路径：D:\git\pnpdjie.github.io\docs\guides\generator\template-generator-install.md        引用路径：https://pnpdjie.github.io/TemplateGenerator-1.0.rar
+文件路径：D:\git\pnpdjie.github.io\docs\guides\jekyll\install-jekyll-in-linux.md        引用路径：https://www.ruby-lang.org/en/
+文件路径：D:\git\pnpdjie.github.io\docs\guides\jekyll\install-jekyll-in-linux.md        引用路径：https://nodejs.org/en/
+文件路径：D:\git\pnpdjie.github.io\docs\guides\jekyll\page-layout-configuration.md        引用路径：/images/docs/guides/jekyll/page-layout.png
+文件路径：D:\git\pnpdjie.github.io\docs\guides\jekyll\page-layout-configuration.md        引用路径：/docs/guides/
+文件路径：D:\git\pnpdjie.github.io\docs\guides\jekyll\windows_setup.md        引用路径：/images/docs/guides/jekyll/image001.png
+文件路径：D:\git\pnpdjie.github.io\docs\guides\jekyll\windows_setup.md        引用路径：/images/docs/guides/jekyll/image003.png
+文件路径：D:\git\pnpdjie.github.io\docs\guides\jekyll\windows_setup.md        引用路径：/images/docs/guides/jekyll/image005.png
+文件路径：D:\git\pnpdjie.github.io\docs\guides\jekyll\windows_setup.md        引用路径：/images/docs/guides/jekyll/image007.png
+文件路径：D:\git\pnpdjie.github.io\docs\guides\jekyll\windows_setup.md        引用路径：/images/docs/guides/jekyll/image009.png
+文件路径：D:\git\pnpdjie.github.io\docs\guides\jekyll\windows_setup.md        引用路径：/images/docs/guides/jekyll/image015.png
+文件路径：D:\git\pnpdjie.github.io\docs\guides\markdown\add-links-into-picture.md        引用路径：图片地址
+文件路径：D:\git\pnpdjie.github.io\docs\guides\markdown\hyperlink.md        引用路径：超链接地址
+文件路径：D:\git\pnpdjie.github.io\docs\guides\markdown\icons.md        引用路径：http://fontawesome.io/
+文件路径：D:\git\pnpdjie.github.io\docs\guides\markdown\icons.md        引用路径：http://fontawesome.io/icons/
+文件路径：D:\git\pnpdjie.github.io\docs\guides\markdown\show-pictures.md        引用路径：图片地址
+文件路径：D:\git\pnpdjie.github.io\docs\guides\markdown\tooltips.md        引用路径：icons.html#引入bootstrap
+文件路径：D:\git\pnpdjie.github.io\docs\test\test2.md        引用路径：https://www.ruby-lang.org/en/
+文件路径：D:\git\pnpdjie.github.io\docs\test\test2.md        引用路径：https://nodejs.org/en/
+文件路径：D:\git\pnpdjie.github.io\docs\test\test3.md        引用路径：/images/docs/guides/jekyll/page-layout.png
+文件路径：D:\git\pnpdjie.github.io\docs\test\test3.md        引用路径：/docs/guides/
 
 以下为字符编码不正确的文件：
-文件路径：E:\OPEN-O\新建文件夹\ASCII.md        编码格式：ASCII
-文件路径：E:\OPEN-O\新建文件夹\home.md        编码格式：UTF-8,UTF-16LE,GB18030,UTF-16BE,Big5,windows-1252
-文件路径：E:\OPEN-O\新建文件夹\JUnitTest.md        编码格式：UTF-8,Shift_JIS
+文件路径：D:\git\pnpdjie.github.io\docs\guides\index.md        编码格式：ASCII
+文件路径：D:\git\pnpdjie.github.io\docs\home\index.md        编码格式：ASCII
+文件路径：D:\git\pnpdjie.github.io\docs\index.md        编码格式：ASCII
+文件路径：D:\git\pnpdjie.github.io\docs\setup\index.md        编码格式：ASCII
 
 以下为title部分格式不正确的文件：
-文件路径：E:\OPEN-O\新建文件夹\JUnitTest.md
+文件路径：D:\git\pnpdjie.github.io\docs\home\index.md
 

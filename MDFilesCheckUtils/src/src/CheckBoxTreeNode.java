@@ -2,6 +2,8 @@ package src;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import model.R;
+
 /**
  * 在模型层上，CheckBoxTree的每个结点需要一个成员来保存其是否被选中，但是JTree的结点则不需要
  * 通过继承DefaultMutableTreeNode定义CheckBoxTreeNode解决
@@ -27,7 +29,12 @@ public class CheckBoxTreeNode extends DefaultMutableTreeNode {
         return isSelected;
     }
 
-    public void setSelected(boolean _isSelected) {
+    /**
+     * 复选框自动勾选方法.
+     * @param _isSelected 复选框是否被选择
+     * @param type 复选框的自动勾选方式
+     */
+    public void setSelected(boolean _isSelected, String type) {
         this.isSelected = _isSelected;
         // 根据选中条件添加判断逻辑,如果都没选，就只勾选当前节点
 		if (type.equals(R.SUBNODES)) {

@@ -1,4 +1,4 @@
-package src;
+/*package src;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -12,17 +12,20 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.DefaultTreeModel;
 
 import model.NodeObj;
+import model.R;
 
-/**
+*//**
  * 添加一个响应用户鼠标事件的监听器
  *
- */
+ *//*
 public class CheckBoxTreeNodeSelectionListener extends MouseAdapter {
     List<NodeObj> list;
 
-    /**
+    String type;
+
+    *//**
      * 鼠标点击监听器
-     */
+     *//*
     @Override
     public void mouseClicked(MouseEvent event) {
         JTree tree = (JTree) event.getSource();
@@ -34,7 +37,7 @@ public class CheckBoxTreeNodeSelectionListener extends MouseAdapter {
         if (path != null) {
             CheckBoxTreeNode node = (CheckBoxTreeNode) path.getLastPathComponent();
             if (node != null) {
-                String type =R.SUBNODES_AND_PARENT;
+//                String type =R.SUBNODES;
                 node.setSelected(!node.isSelected(),type);
                 ((DefaultTreeModel) tree.getModel()).nodeStructureChanged(node);
             }
@@ -48,11 +51,11 @@ public class CheckBoxTreeNodeSelectionListener extends MouseAdapter {
         show(list);
     }
 
-    /**
+    *//**
      * 根据根节点遍历获取所有被选择节点.
      * @param root 根节点
      * @param lst 存放所有被选择节点的集合
-     */
+     *//*
     public void getSelectedNodes (TreeNode root,List lst) {  
         if(root.getChildCount() > 0){  
               for (Enumeration e = root.children(); e.hasMoreElements();) {  
@@ -75,3 +78,4 @@ public class CheckBoxTreeNodeSelectionListener extends MouseAdapter {
     }
     
 }
+*/

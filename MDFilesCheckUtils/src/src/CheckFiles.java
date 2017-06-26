@@ -18,16 +18,12 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -56,6 +52,7 @@ import tools.HttpLinkChecker;
 import tools.ListYamlReadUtils;
 import tools.TitleChecker;
 import tools.WrongPathChecker;
+
 
 /**
  * 低检工具主类.

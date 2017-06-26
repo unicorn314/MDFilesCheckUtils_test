@@ -834,7 +834,7 @@ public class CheckFiles {
             // 遍历所有节点，并获得已勾选节点
             if (root != null) {
                 
-                root.setSelected(!root.isSelected,R.SUBNODES_AND_PARENT);
+                root.setSelected(chckbxSelectAll.isSelected(),R.SUBNODES_AND_PARENT);
                 ((DefaultTreeModel) tree.getModel()).nodeStructureChanged(root);
             }
             // 遍历所有节点，并获得已勾选节点

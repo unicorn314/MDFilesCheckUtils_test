@@ -48,7 +48,7 @@ public class PublishPane extends JPanel {
   /**
    * 选择的文件夹路径.
    */
-  private String rootFolderPath = "D:\\git\\pnpdjie.github.io";
+  private String rootFolderPath;
   private JComboBox comboBox = new JComboBox();
   // private final JTree tree = new JTree();
   private final JButton btnHtmlToPdf = new JButton("html to pdf");
@@ -198,11 +198,13 @@ public class PublishPane extends JPanel {
             createPdf = createPdf + " " + savePath;
 
             System.out.println(createPdf);
+            logArea.append("------------------------pdf生成start------------------------\r\n");
             logArea.append("执行生成pdf命令：" + createPdf + "\r\n");
             CmdResult result = CmdProcesser.execCmd("cmd /c " + createPdf, null);
             // JOptionPane.showMessageDialog(null, result);
             logArea.append(result.getMsg() + "\r\n");
             logArea.append("生成pdf命令执行完毕，文件路径：" + savePath + "\r\n");
+            logArea.append("------------------------pdf生成end------------------------\r\n\r\n");
           } catch (Exception exception) {
             exception.printStackTrace();
           }

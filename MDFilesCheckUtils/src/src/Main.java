@@ -12,10 +12,14 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
+
+import tools.CmdProcesser;
 
 /**
  * 主界面.
@@ -40,9 +44,9 @@ public class Main {
 
   // 文件选择按钮
   final JButton selectFileButton = new JButton("select file");
-  
+
   private CheckPane checkPane;
-  
+
   private PublishPane publishPane;
 
   /**
@@ -95,7 +99,7 @@ public class Main {
     });
 
     // 主窗口north部分按钮功能（顶部"select file"按钮及文件夹路径显示框）
-    
+
     JPanel northPanle = new JPanel();
     northPanle.setLayout(new FlowLayout(FlowLayout.LEFT));
     rootFolderTextField.setEditable(false);
@@ -123,5 +127,4 @@ public class Main {
       }
     });
   }
-
 }

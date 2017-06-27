@@ -3,8 +3,8 @@ package src;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.TextField;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -12,48 +12,53 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTree;
+import javax.swing.SwingWorker;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
+import model.CmdResult;
 import model.ListYml;
 import model.NodeObj;
 import model.R;
 import tools.CheckBoxTreeNodeUtils;
+import tools.CmdProcesser;
 import tools.ListYamlReadUtils;
 
 /**
- * 
+ * 离线发布界面.
  * 
  * @author ywx474563 2017年6月26日
  */
 public class PublishPane extends JPanel {
-  
+
   /**
    * 选择的文件夹路径.
    */
-  private String rootFolderPath;
+  private String rootFolderPath = "D:\\git\\pnpdjie.github.io";
   private JComboBox comboBox = new JComboBox();
   // private final JTree tree = new JTree();
   private final JButton btnHtmlToPdf = new JButton("html to pdf");
 
   // 确认按钮
   final JButton createTreeButton = new JButton("create tree");
+
+  // 启动Jekyll按钮
+  final JButton jekyllServeButton = new JButton("jekyll serve");
+
   JTree tree = new JTree();
 
   JScrollPane scrollPane = new JScrollPane();
@@ -62,7 +67,9 @@ public class PublishPane extends JPanel {
   JCheckBox chckbxSelectAll = new JCheckBox("select all");
   JCheckBox chckbxSelectParent = new JCheckBox("select parent");
   JCheckBox chckbxSelectChildren = new JCheckBox("select children");
-  
+
+  JTextArea logArea = new JTextArea();
+
   // 下拉框当前选择的第几个选项
   int comboBoxSelectIndex = 0;
 
@@ -83,7 +90,6 @@ public class PublishPane extends JPanel {
     this.nodeObjList = nodeObjList;
   }
 
-  
   /**
    * 树形图复选框勾选模式
    */
@@ -121,7 +127,6 @@ public class PublishPane extends JPanel {
     // textArea.setFont(new Font("黑体", Font.BOLD, fontSize));
     // textArea.setLineWrap(true);
     // scrollPane.setColumnHeaderView(comboBox);
-    add(scrollPane, BorderLayout.CENTER);
 
     // "create tree"按钮添加点击生成页面列表事件
     createTreeButton.addActionListener(new ActionListener() {
@@ -149,6 +154,25 @@ public class PublishPane extends JPanel {
         }
       }
     });
+
+    jekyllServeButton.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        if (rootFolderPath == null || "".equals(rootFolderPath)) {
+          // 如果还没有选择过文件夹，弹出提示窗口
+          JOptionPane.showMessageDialog(null, "请选择项目根路径!");
+          return;
+        }
+
+        try {
+          JekyllServeWorker work = new JekyllServeWorker(rootFolderPath);
+          work.execute();
+        } catch (Exception e1) {
+          // TODO Auto-generated catch block
+          e1.printStackTrace();
+        }
+      }
+    });
+
     // "html to pdf"按钮添加点击事件
     btnHtmlToPdf.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -162,43 +186,118 @@ public class PublishPane extends JPanel {
             String createPdf = "wkhtmltopdf toc ";
             for (NodeObj nodeobj : list) {
               if (nodeobj.getPath() != null && !nodeobj.equals("")) {
-                String str = nodeobj.getPath().replace(rootFolderPath, "")
-                    .replace("\\", "/").replace(".md", ".html");
+                String str = nodeobj.getPath().replace(rootFolderPath, "").replace("\\", "/")
+                    .replace(".md", ".html");
                 str = "localhost:4000" + str;
                 createPdf = createPdf + str + " ";
               }
             }
             // pdf文件名加上时间戳
-            createPdf = createPdf + " " + rootFolderPath + "\\htmlToPdf"
+            String savePath = System.getProperty("user.dir") + "\\htmlToPdf"
                 + System.currentTimeMillis() + ".pdf";
-            // 将转换命令保存到txt文件中
-            PrintStream mytxt = new PrintStream("./htmlToPdf.txt");
-            PrintStream out = System.out;
-            System.setOut(mytxt);
+            createPdf = createPdf + " " + savePath;
+
             System.out.println(createPdf);
-            System.setOut(out);
-            mytxt.close();
-            out.close();
-          } catch (FileNotFoundException exception) {
+            logArea.append("执行生成pdf命令：" + createPdf + "\r\n");
+            CmdResult result = CmdProcesser.execCmd("cmd /c " + createPdf, null);
+            // JOptionPane.showMessageDialog(null, result);
+            logArea.append(result.getMsg() + "\r\n");
+            logArea.append("生成pdf命令执行完毕，文件路径：" + savePath + "\r\n");
+          } catch (Exception exception) {
             exception.printStackTrace();
           }
-          // 弹出窗口提示检查完成，并提示日志位置
-          JOptionPane.showMessageDialog(null, "生成pdf命令已保存在本地目录下的htmlToPdf.txt中。");
         } else {
           // 如果还没有选择过文件夹，弹出提示窗口
           JOptionPane.showMessageDialog(null, "请选择项目根路径!");
         }
       }
     });
+
     // 主窗口north部分按钮功能（顶部"select file"按钮及文件夹路径显示框）
     JPanel northPanle = new JPanel(new FlowLayout(FlowLayout.LEFT));
     createTreeButton.setMaximumSize(new Dimension(90, 30));
+    jekyllServeButton.setMaximumSize(new Dimension(90, 30));
     northPanle.add(createTreeButton);
+    northPanle.add(jekyllServeButton);
     northPanle.add(btnHtmlToPdf);
     add(northPanle, BorderLayout.NORTH);
 
-  }
+    JPanel panelContainer = new JPanel();
 
+    // centerPanel.removeAll();
+    // scrollPane.remove(tree);
+    // CheckBoxTreeNodeUtils nodeUtils = new CheckBoxTreeNodeUtils();
+    // List<CheckBoxTreeNode> treeNodeList = new ArrayList<CheckBoxTreeNode>();
+    // nodeUtils.createTreeNodes(ymlList, treeNodeList);
+
+    // tree = new JTree();
+    // tree.addMouseListener(new CheckBoxTreeNodeSelectionListener());
+    // DefaultTreeModel model = new DefaultTreeModel(treeNodeList.get(index));
+    // tree.setModel(model);
+    // tree.setCellRenderer(new CheckBoxTreeCellRenderer());
+
+    chckbxSelectAll.addMouseListener(new CheckBoxSelectAllListener());
+
+    // 生成窗口中间部分
+    add(panelContainer, BorderLayout.CENTER);
+    centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
+
+    // 生成下拉框
+    // comboBox.setBounds(5, 13, 590, 24);
+    comboBox.setSize(100, 30);
+    centerPanel.add(comboBox);
+
+    JPanel checkboxPanel = new JPanel();
+    checkboxPanel.setLayout(new BoxLayout(checkboxPanel, BoxLayout.X_AXIS));
+
+    // 生成多选框
+    // chckbxSelectAll.setBounds(5, 46, 133, 27);
+    checkboxPanel.add(chckbxSelectAll);
+
+    // chckbxSelectParent.setBounds(136, 46, 130, 27);
+    checkboxPanel.add(chckbxSelectParent);
+
+    // chckbxSelectChildren.setBounds(277, 46, 163, 27);
+    checkboxPanel.add(chckbxSelectChildren);
+
+    centerPanel.add(checkboxPanel);
+
+    // scrollPane.setBounds(5, 82, 590, 349);
+    centerPanel.add(scrollPane);
+
+    // 生成树形图
+    scrollPane.setViewportView(tree);
+    scrollPane.validate();
+
+    // panelContainer 的布局为 GridBagLayout
+    panelContainer.setLayout(new GridBagLayout());
+
+    GridBagConstraints c1 = new GridBagConstraints();
+    c1.gridx = 0;
+    c1.gridy = 0;
+    c1.weightx = 0;
+    c1.weighty = 0;
+    c1.fill = GridBagConstraints.BOTH;
+    // 加入 topPanel
+    panelContainer.add(centerPanel, c1);
+
+    JScrollPane middlePanel = new JScrollPane();
+    logArea.setLineWrap(true); // 激活自动换行功能
+    logArea.setWrapStyleWord(true); // 激活断行不断字功能
+    middlePanel.add(logArea);
+    middlePanel.setViewportView(logArea);
+    middlePanel.validate();
+    GridBagConstraints c2 = new GridBagConstraints();
+    c2.gridx = 1;
+    c2.gridy = 0;
+    c2.weightx = 1;
+    c2.weighty = 1;
+    c2.fill = GridBagConstraints.BOTH;
+    // 加入 middlePanel
+    panelContainer.add(middlePanel, c2);
+
+    panelContainer.setOpaque(true);
+  }
 
   /**
    * 生成窗口主页面中的树形图
@@ -207,7 +306,8 @@ public class PublishPane extends JPanel {
    *          下拉框的被选中项
    */
   public void createTree(int index) {
-    centerPanel.removeAll();
+    logArea.setText("");
+
     scrollPane.remove(tree);
     CheckBoxTreeNodeUtils nodeUtils = new CheckBoxTreeNodeUtils();
     List<CheckBoxTreeNode> treeNodeList = new ArrayList<CheckBoxTreeNode>();
@@ -219,32 +319,10 @@ public class PublishPane extends JPanel {
     tree.setModel(model);
     tree.setCellRenderer(new CheckBoxTreeCellRenderer());
 
-    chckbxSelectAll.addMouseListener(new CheckBoxSelectAllListener());
-
-    // 生成窗口中间部分
-    add(centerPanel, BorderLayout.CENTER);
-    centerPanel.setLayout(null);
-
-    // 生成下拉框
-    comboBox.setBounds(5, 13, 590, 24);
-    centerPanel.add(comboBox);
-
-    // 生成多选框
-    chckbxSelectAll.setBounds(5, 46, 133, 27);
-    centerPanel.add(chckbxSelectAll);
-
-    chckbxSelectParent.setBounds(136, 46, 130, 27);
-    centerPanel.add(chckbxSelectParent);
-
-    chckbxSelectChildren.setBounds(277, 46, 163, 27);
-    centerPanel.add(chckbxSelectChildren);
-
-    scrollPane.setBounds(5, 82, 590, 349);
-    centerPanel.add(scrollPane);
-
     // 生成树形图
     scrollPane.setViewportView(tree);
     scrollPane.validate();
+
   }
 
   /**
@@ -358,4 +436,32 @@ public class PublishPane extends JPanel {
     }
   }
 
+  class JekyllServeWorker extends SwingWorker<CmdResult, Void> {
+
+    private String path;
+    private CmdResult result;
+
+    public JekyllServeWorker(String path) {
+      super();
+      this.path = path;
+    }
+
+    /**
+     * 启动该线程，开始检测所有文件，并同步刷新进度条.
+     */
+    @Override
+    protected CmdResult doInBackground() throws Exception {
+      result = CmdProcesser.startJekyll(path);
+      return result;
+    }
+
+    /**
+     * 将所有错误列表中的检测结果拼成字符串，用于页面展示.
+     */
+    @Override
+    protected void done() {
+      // JOptionPane.showMessageDialog(null, result);
+      logArea.append(result.getMsg() + "\r\n");
+    }
+  }
 }

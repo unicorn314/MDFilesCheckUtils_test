@@ -513,7 +513,7 @@ public class CheckFiles {
                         getSelectedNodes(root, list);
                         String createPdf = "wkhtmltopdf toc ";
                         for (NodeObj nodeobj : list) {
-                            if (nodeobj.getPath() != null && !nodeobj.equals("")){
+                            if (nodeobj.getPath() != null && !nodeobj.toString().equals("")){
                                 String str = nodeobj.getPath()
                                         .replace(rootFolderTextField.getText(), "")
                                         .replace("\\", "/")

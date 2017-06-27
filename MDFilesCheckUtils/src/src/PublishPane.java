@@ -185,7 +185,7 @@ public class PublishPane extends JPanel {
             getSelectedNodes(root, list);
             String createPdf = "wkhtmltopdf toc ";
             for (NodeObj nodeobj : list) {
-              if (nodeobj.getPath() != null && !nodeobj.equals("")) {
+              if (nodeobj.getPath() != null && !nodeobj.toString().equals("")) {
                 String str = nodeobj.getPath().replace(rootFolderPath, "").replace("\\", "/")
                     .replace(".md", ".html");
                 str = "localhost:4000" + str;
@@ -242,30 +242,30 @@ public class PublishPane extends JPanel {
 
     // 生成窗口中间部分
     add(panelContainer, BorderLayout.CENTER);
-    centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
+    centerPanel.setLayout(new BorderLayout());
 
+    
+    JPanel comboBoxPanel = new JPanel();
+    comboBoxPanel.setLayout(new BoxLayout(comboBoxPanel, BoxLayout.Y_AXIS));
+        
     // 生成下拉框
     // comboBox.setBounds(5, 13, 590, 24);
-    comboBox.setSize(100, 30);
-    centerPanel.add(comboBox);
+    comboBoxPanel.add(comboBox);
 
     JPanel checkboxPanel = new JPanel();
     checkboxPanel.setLayout(new BoxLayout(checkboxPanel, BoxLayout.X_AXIS));
 
     // 生成多选框
-    // chckbxSelectAll.setBounds(5, 46, 133, 27);
     checkboxPanel.add(chckbxSelectAll);
 
-    // chckbxSelectParent.setBounds(136, 46, 130, 27);
     checkboxPanel.add(chckbxSelectParent);
 
-    // chckbxSelectChildren.setBounds(277, 46, 163, 27);
     checkboxPanel.add(chckbxSelectChildren);
 
-    centerPanel.add(checkboxPanel);
+    comboBoxPanel.add(checkboxPanel);
+    centerPanel.add(comboBoxPanel,BorderLayout.NORTH);
 
-    // scrollPane.setBounds(5, 82, 590, 349);
-    centerPanel.add(scrollPane);
+    centerPanel.add(scrollPane,BorderLayout.CENTER);
 
     // 生成树形图
     scrollPane.setViewportView(tree);
@@ -280,7 +280,6 @@ public class PublishPane extends JPanel {
     c1.weightx = 0;
     c1.weighty = 0;
     c1.fill = GridBagConstraints.BOTH;
-    // 加入 topPanel
     panelContainer.add(centerPanel, c1);
 
     JScrollPane middlePanel = new JScrollPane();
@@ -295,7 +294,6 @@ public class PublishPane extends JPanel {
     c2.weightx = 1;
     c2.weighty = 1;
     c2.fill = GridBagConstraints.BOTH;
-    // 加入 middlePanel
     panelContainer.add(middlePanel, c2);
 
     panelContainer.setOpaque(true);

@@ -1,6 +1,7 @@
 package src;
 
 import java.awt.BorderLayout;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -13,7 +14,11 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -46,6 +51,8 @@ public class CheckPane extends JPanel {
   private String rootFolderPath;
   // 开始检测按钮
   final JButton checkButton = new JButton("start check");
+  // 浏览日志按钮
+  final JButton logButton = new JButton("browse log");
 
   final int tWidth = 0;
   final int tHeight = 0;
@@ -84,6 +91,11 @@ public class CheckPane extends JPanel {
    */
   private StringBuilder resultStr = new StringBuilder();
 
+  /**
+   * 日志文件路径.
+   */
+  private String logPath;
+
   public void setRootFolderPath(String rootFolderPath) {
     this.rootFolderPath = rootFolderPath;
   }
@@ -96,8 +108,8 @@ public class CheckPane extends JPanel {
 
     setSize(fWidth, fHeight);
     setLayout(new BorderLayout());
-    textArea.setLineWrap(true);        //激活自动换行功能 
-    textArea.setWrapStyleWord(true);            // 激活断行不断字功能
+    textArea.setLineWrap(true); // 激活自动换行功能
+    textArea.setWrapStyleWord(true); // 激活断行不断字功能
     scrollPane.setViewportView(textArea);
     scrollPane.validate();
     add(scrollPane, BorderLayout.CENTER);
@@ -118,13 +130,46 @@ public class CheckPane extends JPanel {
       }
     });
 
+    // 查看日志
+    logButton.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        try {
+          if (logPath != null && !"".equals(logPath)) {
+
+            if (!Desktop.isDesktopSupported()) {
+              // 测试当前平台是否支持此类
+              JOptionPane.showMessageDialog(null, "浏览器设置不支持，请手动打开链接：" + logPath);
+              return;
+            }
+            // 用来打开系统默认浏览器浏览指定的URL
+            Desktop desktop = Desktop.getDesktop();
+            // 创建URI统一资源标识符
+            URI uri = new URI("file:///"+logPath.replace("\\", "/"));
+            // 使用默认浏览器打开超链接
+            desktop.browse(uri);
+          } else {
+            JOptionPane.showMessageDialog(null, "请先执行低检!");
+          }
+        } catch (URISyntaxException | IOException ex) {
+          // TODO: handle exception
+        }
+      }
+    });
+
     // 主窗口south部分（底部按钮及进度条）
-    JPanel southPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    checkButton.setMaximumSize(new Dimension(90, 30));
-    southPanel.add(checkButton);
+    JPanel southPanel = new JPanel(new FlowLayout());
     southPanel.add(jpb);
     southPanel.add(label);
-    add(southPanel, BorderLayout.NORTH);
+    add(southPanel, BorderLayout.SOUTH);
+
+    // 主窗口south部分（底部按钮及进度条）
+    JPanel northPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    checkButton.setMaximumSize(new Dimension(90, 30));
+    northPanel.add(checkButton);
+    logButton.setMaximumSize(new Dimension(90, 30));
+    logButton.setEnabled(false);
+    northPanel.add(logButton);
+    add(northPanel, BorderLayout.NORTH);
   }
 
   /**
@@ -312,9 +357,26 @@ public class CheckPane extends JPanel {
     }
   }
 
-  private void writeMsg(String msg) {
-    resultStr.append(msg);
-    textArea.append(msg);
+  // private void writeMsg(String msg) {
+  // resultStr.append(msg);
+  // textArea.append(msg);
+  // }
+
+  private void htmlFormat(String msg, String tab) {
+    resultStr.append("<" + tab + ">" + msg + "</" + tab + ">");
+  }
+
+  private void htmlWrapper(String content) {
+    resultStr = new StringBuilder();
+    resultStr.append("<!DOCTYPE HTML>");
+    resultStr.append("<html>");
+    resultStr.append("<head>");
+    resultStr.append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />");
+    resultStr.append("</head>");
+    resultStr.append("<body>");
+    resultStr.append(content);
+    resultStr.append("</body>");
+    resultStr.append("</html>");
   }
 
   /**
@@ -326,11 +388,15 @@ public class CheckPane extends JPanel {
   public void check(final String rootPath) {
     File folder = new File(rootPath); // 指定项目根目录
     if (!folder.exists()) { // 如果文件夹不存在
-      writeMsg("目录不存在：" + folder.getAbsolutePath() + "\r\n");
+      String msg = "目录不存在：" + folder.getAbsolutePath();
+      htmlFormat(msg, "p");
+      textArea.append(msg + "\r\n");
       return;
     }
     List<File> result = FileUtils.searchFile(folder); // 调用方法获得文件数组
-    writeMsg("在 " + folder + " 以及所有子文件时查找对象.md文件及.yml文件" + "\r\n");
+    String msg = "在 " + folder + " 以及所有子文件时查找对象.md文件及.yml文件";
+    htmlFormat(msg, "p");
+    textArea.append(msg + "\r\n");
     ProGressWork work = new ProGressWork(result, rootPath);
     work.execute();
   }
@@ -401,16 +467,24 @@ public class CheckPane extends JPanel {
      */
     @Override
     protected void done() {
+      String msg = "";
       // 所有检查结果都已存入各自的list，开始将最终结果转换为字符串
       if (badURLList.size() > 0) {
-        writeMsg("\r\n以下为失效链接：" + "\r\n");
+        msg = "失效链接总数：" + badURLList.size();
+        htmlFormat(msg, "h2");
+        textArea.append(msg + "\r\n");
+
         for (MyURL myURL : badURLList) {
-          writeMsg("文件路径：" + myURL.getFile() + "        链接地址：" + myURL.getUrl() + "\r\n");
+          msg = "文件路径：" + myURL.getFile() + " 链接地址：" + myURL.getUrl();
+          htmlFormat(msg, "p");
         }
       }
 
       if (wrongIncludePathList.size() > 0) {
-        writeMsg("\r\n以下为错误include标签引用路径：" + "\r\n");
+        msg = "错误include标签引用路径总数：" + wrongIncludePathList.size();
+        htmlFormat(msg, "h2");
+        textArea.append(msg + "\r\n");
+
         for (MyURL myURL : wrongIncludePathList) {
           String url = myURL.getUrl();
           try {
@@ -418,12 +492,16 @@ public class CheckPane extends JPanel {
           } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
           }
-          writeMsg("文件路径：" + myURL.getFile() + "        引用路径：" + url + "\r\n");
+          msg = "文件路径：" + myURL.getFile() + "        引用路径：" + url;
+          htmlFormat(msg, "p");
         }
       }
 
       if (wrongInternalPathList.size() > 0) {
-        writeMsg("\r\n以下为错误内部引用路径：" + "\r\n");
+        msg = "错误内部引用路径总数：" + wrongInternalPathList.size();
+        htmlFormat(msg, "h2");
+        textArea.append(msg + "\r\n");
+
         for (MyURL myURL : wrongInternalPathList) {
           String url = myURL.getUrl();
           try {
@@ -431,12 +509,16 @@ public class CheckPane extends JPanel {
           } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
           }
-          writeMsg("文件路径：" + myURL.getFile() + "        引用路径：" + url + "\r\n");
+          msg = "文件路径：" + myURL.getFile() + "        引用路径：" + url;
+          htmlFormat(msg, "p");
         }
       }
 
       if (wrongCharsetFile.size() > 0) {
-        writeMsg("\r\n以下为字符编码不正确的文件：" + "\r\n");
+        msg = "字符编码不正确的文件总数：" + wrongCharsetFile.size();
+        htmlFormat(msg, "h2");
+        textArea.append(msg + "\r\n");
+
         for (MyURL myURL : wrongCharsetFile) {
           String url = myURL.getUrl();
           try {
@@ -444,33 +526,51 @@ public class CheckPane extends JPanel {
           } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
           }
-          writeMsg("文件路径：" + myURL.getFile() + "        编码格式：" + url + "\r\n");
+          msg = "文件路径：" + myURL.getFile() + "        编码格式：" + url;
+          htmlFormat(msg, "p");
         }
       }
 
       if (wrongTitleFile.size() > 0) {
-        writeMsg("\r\n以下为title部分格式不正确的文件：" + "\r\n");
+        msg = "title部分格式不正确的文件总数：" + wrongTitleFile.size();
+        htmlFormat(msg, "h2");
+        textArea.append(msg + "\r\n");
+
         for (MyURL myURL : wrongTitleFile) {
-          writeMsg("文件路径：" + myURL.getFile() + "\r\n");
+          msg = "文件路径：" + myURL.getFile();
+          htmlFormat(msg, "p");
         }
       }
+
+      htmlWrapper(resultStr.toString());
+
       // 将结果保存到日志文件中
       try {
-        PrintStream mytxt = new PrintStream("./MDFilesCheckLog.log");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+        String logRelativePath = "MDFilesCheckLog" + formatter.format(new Date()) + ".html";
+
+        File logFile = new File(logRelativePath);
+        PrintStream mytxt = new PrintStream(logFile, "UTF-8");
         PrintStream out = System.out;
         System.setOut(mytxt);
-        System.out.println(resultStr);
+        String logContent = new String(resultStr.toString().getBytes("UTF-8"));
+        System.out.println(logContent);
         System.setOut(out);
         System.out.println("日志保存完毕。");
         mytxt.close();
         out.close();
-      } catch (FileNotFoundException e) {
+
+        textArea.append("日志保存路径：" + logFile.getAbsolutePath());
+        logPath = logFile.getAbsolutePath();
+        logButton.setEnabled(true);
+
+      } catch (IOException e) {
         e.printStackTrace();
       }
       // 弹出窗口提示检查完成，并提示日志位置
-      JOptionPane.showMessageDialog(null, "检查已完成。\n结果保存在当前目录下的日志文件MDFilesCheckLog.log中。");
+//      JOptionPane.showMessageDialog(null, "检查已完成。\n结果保存在当前目录下的日志文件MDFilesCheckLog.log中。");
       // 在文本框中显示结果
-//      writeMsg("日志文件MDFilesCheckLog.log已生成，保存在当前目录下");
+      // writeMsg("日志文件MDFilesCheckLog.log已生成，保存在当前目录下");
       checkButton.setEnabled(true);
     }
   }

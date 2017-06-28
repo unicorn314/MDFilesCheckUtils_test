@@ -19,7 +19,7 @@ public class CheckPaneTest {
    */
   @Test
   public void testCheck() {
-    check.check("E:/OPEN-O");
+    check.check("utestfiles");
     assertThat(check.getResultStr().length(), greaterThan(0));
   }
 
@@ -30,7 +30,7 @@ public class CheckPaneTest {
   public void testCheckCharset_true() {
     try {
       check.cleanAllLists();
-      check.checkCharset(new File("E:/OPEN-O/_include/ASCII.md"));
+      check.checkCharset(new File("utestfiles/_include/ASCII.md"));
     } catch (FileNotFoundException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -48,7 +48,7 @@ public class CheckPaneTest {
   public void testCheckCharset_false() {
     try {
       check.cleanAllLists();
-      check.checkCharset(new File("E:/OPEN-O/show-pages.md"));
+      check.checkCharset(new File("utestfiles/show-pages.md"));
     } catch (FileNotFoundException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -64,7 +64,7 @@ public class CheckPaneTest {
    */
   @Test
   public void testIsValidPath_ture() {
-    String rootPath = "E:/OPEN-O";
+    String rootPath = "utestfiles";
     String strPath = "JUnitTest.md";
     assertThat(check.isValidPath(rootPath, strPath), is(true));
   }
@@ -74,7 +74,7 @@ public class CheckPaneTest {
    */
   @Test
   public void testIsValidPath_false() {
-    String rootPath = "E:/OPEN-O";
+    String rootPath = "utestfiles";
     String strPath = "templates/home.md";
     assertThat(check.isValidPath(rootPath, strPath), is(false));
   }
@@ -84,7 +84,7 @@ public class CheckPaneTest {
    */
   @Test
   public void testSearchBadUrlTrue() {
-    check.searchBadUrl(new File("E:/OPEN-O/_include/JUnitTest.md"));
+    check.searchBadUrl(new File("utestfiles/_include/JUnitTest.md"));
     if (check.getBadUrlList().size() == 1) {
       assertThat(check.getBadUrlList().get(0).getUrl(),
           is("http://www.baidu.edu"));
@@ -96,7 +96,7 @@ public class CheckPaneTest {
    */
   @Test
   public void testSearchBadUrlFalse() {
-    check.searchBadUrl(new File("E:/OPEN-O/_include/home.md"));
+    check.searchBadUrl(new File("utestfiles/_include/home.md"));
     if (check.getBadUrlList().size() == 1) {
       assertThat(check.getBadUrlList().size(), comparesEqualTo(0));
     }
@@ -107,8 +107,8 @@ public class CheckPaneTest {
    */
   @Test
   public void testSearchWrongPath_true() {
-    check.searchWrongIncludePath(new File("E:/OPEN-O/_include/JUnitTest.md"),
-        "E:/OPEN-O/");
+    check.searchWrongIncludePath(new File("utestfiles/_include/JUnitTest.md"),
+        "utestfiles/");
     if (check.getWrongIncludePathList().size() == 1) {
       assertThat(check.getWrongIncludePathList().get(0).getUrl(),
           is("templates/home.md"));
@@ -120,8 +120,8 @@ public class CheckPaneTest {
    */
   @Test
   public void testSearchWrongPath_false() {
-    check.searchWrongIncludePath(new File("E:/OPEN-O/_include/home.md"),
-        "E:/OPEN-O/");
+    check.searchWrongIncludePath(new File("utestfiles/_include/home.md"),
+        "utestfiles/");
     if (check.getWrongIncludePathList().size() == 1) {
       assertThat(check.getWrongIncludePathList().size(), comparesEqualTo(0));
     }
@@ -132,10 +132,10 @@ public class CheckPaneTest {
    */
   @Test
   public void testSerchWrongTitle_true() {
-    check.searchWrongTitle(new File("E:\\OPEN-O\\_include\\JUnitTest.md"));
+    check.searchWrongTitle(new File("utestfiles\\_include\\JUnitTest.md"));
     if (check.getWrongTitleFile().size() == 1) {
       assertThat(check.getWrongTitleFile().get(0).getFile(),
-          is("E:\\OPEN-O\\_include\\JUnitTest.md"));
+          is("utestfiles\\_include\\JUnitTest.md"));
     }
   }
 
@@ -144,7 +144,7 @@ public class CheckPaneTest {
    */
   @Test
   public void testSerchWrongTitle_false() {
-    check.searchWrongTitle(new File("E:\\OPEN-O\\_include\\home.md"));
+    check.searchWrongTitle(new File("utestfiles\\_include\\home.md"));
     if (check.getWrongTitleFile().size() == 1) {
       assertThat(check.getWrongTitleFile().size(), comparesEqualTo(0));
     }
@@ -155,8 +155,8 @@ public class CheckPaneTest {
    */
   @Test
   public void testSearchWrongIncludePath_true() {
-    check.searchWrongIncludePath(new File("E:\\OPEN-O\\_include\\JUnitTest.md"),
-        "E:\\OPEN-O");
+    check.searchWrongIncludePath(new File("utestfiles\\_include\\JUnitTest.md"),
+        "utestfiles");
     assertThat(check.getWrongIncludePathList().size(), greaterThan(0));
   }
 
@@ -165,8 +165,8 @@ public class CheckPaneTest {
    */
   @Test
   public void testSearchWrongIncludePath_false() {
-    check.searchWrongIncludePath(new File("E:\\OPEN-O\\_include\\home.md"),
-        "E:\\OPEN-O");
+    check.searchWrongIncludePath(new File("utestfiles\\_include\\home.md"),
+        "utestfiles");
     assertThat(check.getWrongIncludePathList().size(), comparesEqualTo(0));
   }
 }

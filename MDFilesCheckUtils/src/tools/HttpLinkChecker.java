@@ -21,8 +21,8 @@ import model.MyUrl;
 public class HttpLinkChecker {
   // 网址的正则表达式
   private final String httpRex = "(http://|ftp://|https://)"
-      + "[^\u4e00-\u9fa5\\s\"\'\\()]*?\\."
-      + "(com|net|cn|me|tw|fr|edu)[^\u4e00-\u9fa5\\s\"\'\\()]*";
+      + "[^\\s\"\'\\()]*?\\."
+      + "(com|net|cn|me|tw|fr|edu)[^\\s\"\'\\()]*";
 
   /**
    * 判断字符串是否为网址.

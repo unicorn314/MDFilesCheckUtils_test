@@ -144,7 +144,7 @@ public class CheckPane extends JPanel {
             // 用来打开系统默认浏览器浏览指定的URL
             Desktop desktop = Desktop.getDesktop();
             // 创建URI统一资源标识符
-            URI uri = new URI("file:///"+logPath.replace("\\", "/"));
+            URI uri = new URI("file:///" + logPath.replace("\\", "/"));
             // 使用默认浏览器打开超链接
             desktop.browse(uri);
           } else {
@@ -365,6 +365,11 @@ public class CheckPane extends JPanel {
   private void htmlFormat(String msg, String tab) {
     resultStr.append("<" + tab + ">" + msg + "</" + tab + ">");
   }
+  
+  private void htmlFormat(String msg) {
+    resultStr.append(msg);
+  }
+
 
   private void htmlWrapper(String content) {
     resultStr = new StringBuilder();
@@ -469,78 +474,95 @@ public class CheckPane extends JPanel {
     protected void done() {
       String msg = "";
       // 所有检查结果都已存入各自的list，开始将最终结果转换为字符串
-      if (badURLList.size() > 0) {
-        msg = "失效链接总数：" + badURLList.size();
-        htmlFormat(msg, "h2");
-        textArea.append(msg + "\r\n");
+      msg = "失效链接总数：" + badURLList.size();
+      htmlFormat(msg, "h2");
+      textArea.append(msg + "\r\n");
+      msg = "处理建议：请检查本地网络是否通畅，链接是否输入正确，若链接被删除，请删除或改用其他网页链接替代";
+      htmlFormat(msg, "h4");
+      textArea.append(msg + "\r\n");
 
-        for (MyURL myURL : badURLList) {
-          msg = "文件路径：" + myURL.getFile() + " 链接地址：" + myURL.getUrl();
-          htmlFormat(msg, "p");
-        }
+      for (MyURL myURL : badURLList) {
+        msg = "文件路径：" + myURL.getFile() + " 链接地址：" + myURL.getUrl();
+        htmlFormat(msg, "p");
       }
+      htmlFormat("<br />");
+      textArea.append("\r\n");
 
-      if (wrongIncludePathList.size() > 0) {
-        msg = "错误include标签引用路径总数：" + wrongIncludePathList.size();
-        htmlFormat(msg, "h2");
-        textArea.append(msg + "\r\n");
+      msg = "错误include标签引用路径总数：" + wrongIncludePathList.size();
+      htmlFormat(msg, "h2");
+      textArea.append(msg + "\r\n");
+      msg = "处理建议：请检查项目相对路径是否输入正确，或者原文件是否被删除";
+      htmlFormat(msg, "h4");
+      textArea.append(msg + "\r\n");
 
-        for (MyURL myURL : wrongIncludePathList) {
-          String url = myURL.getUrl();
-          try {
-            url = new String(url.getBytes(), "utf-8");
-          } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-          }
-          msg = "文件路径：" + myURL.getFile() + "        引用路径：" + url;
-          htmlFormat(msg, "p");
+      for (MyURL myURL : wrongIncludePathList) {
+        String url = myURL.getUrl();
+        try {
+          url = new String(url.getBytes(), "utf-8");
+        } catch (UnsupportedEncodingException e) {
+          e.printStackTrace();
         }
+        msg = "文件路径：" + myURL.getFile() + "        引用路径：" + url;
+        htmlFormat(msg, "p");
       }
+      htmlFormat("<br />");
+      textArea.append("\r\n");
 
-      if (wrongInternalPathList.size() > 0) {
-        msg = "错误内部引用路径总数：" + wrongInternalPathList.size();
-        htmlFormat(msg, "h2");
-        textArea.append(msg + "\r\n");
+      msg = "错误内部引用路径总数：" + wrongInternalPathList.size();
+      htmlFormat(msg, "h2");
+      textArea.append(msg + "\r\n");
+      msg = "处理建议：请检查项目相对路径是否输入正确，或者原文件是否被删除";
+      htmlFormat(msg, "h4");
+      textArea.append(msg + "\r\n");
 
-        for (MyURL myURL : wrongInternalPathList) {
-          String url = myURL.getUrl();
-          try {
-            url = new String(url.getBytes(), "utf-8");
-          } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-          }
-          msg = "文件路径：" + myURL.getFile() + "        引用路径：" + url;
-          htmlFormat(msg, "p");
+      for (MyURL myURL : wrongInternalPathList) {
+        String url = myURL.getUrl();
+        try {
+          url = new String(url.getBytes(), "utf-8");
+        } catch (UnsupportedEncodingException e) {
+          e.printStackTrace();
         }
+        msg = "文件路径：" + myURL.getFile() + "        引用路径：" + url;
+        htmlFormat(msg, "p");
       }
+      htmlFormat("<br />");
+      textArea.append("\r\n");
 
-      if (wrongCharsetFile.size() > 0) {
-        msg = "字符编码不正确的文件总数：" + wrongCharsetFile.size();
-        htmlFormat(msg, "h2");
-        textArea.append(msg + "\r\n");
+      msg = "字符编码不正确的文件总数：" + wrongCharsetFile.size();
+      htmlFormat(msg, "h2");
+      textArea.append(msg + "\r\n");
+      msg = "处理建议：请用编辑工具将文件的字符编码转换为合适的编码格式，建议为UTF-8格式，否则可能出现乱码";
+      htmlFormat(msg, "h4");
+      textArea.append(msg + "\r\n");
 
-        for (MyURL myURL : wrongCharsetFile) {
-          String url = myURL.getUrl();
-          try {
-            url = new String(url.getBytes(), "utf-8");
-          } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-          }
-          msg = "文件路径：" + myURL.getFile() + "        编码格式：" + url;
-          htmlFormat(msg, "p");
+      for (MyURL myURL : wrongCharsetFile) {
+        String url = myURL.getUrl();
+        try {
+          url = new String(url.getBytes(), "utf-8");
+        } catch (UnsupportedEncodingException e) {
+          e.printStackTrace();
         }
+        msg = "文件路径：" + myURL.getFile() + "        编码格式：" + url;
+        htmlFormat(msg, "p");
       }
+      htmlFormat("<br />");
+      textArea.append("\r\n");
 
-      if (wrongTitleFile.size() > 0) {
-        msg = "title部分格式不正确的文件总数：" + wrongTitleFile.size();
-        htmlFormat(msg, "h2");
-        textArea.append(msg + "\r\n");
+      msg = "title部分格式不正确的文件总数：" + wrongTitleFile.size();
+      htmlFormat(msg, "h2");
+      textArea.append(msg + "\r\n");
+      msg = "处理建议：请修改为正确的格式。格式要求如下：\r\n" + "1.起始和结束的短横线都应为3个，不能多不能少，也不能有空格。\r\n"
+          + "2.中间内容部分应为键值对格式，key和value中间用英文格式冒号后紧跟一个英文空格隔开。\r\n" + "正确实例如下：\r\n" + "---\r\n"
+          + "title: this is title\r\n" + "---\r\n";
+      textArea.append(msg + "\r\n");
+      htmlFormat(msg.replace("\r\n", "<br />"), "h4");
 
-        for (MyURL myURL : wrongTitleFile) {
-          msg = "文件路径：" + myURL.getFile();
-          htmlFormat(msg, "p");
-        }
+      for (MyURL myURL : wrongTitleFile) {
+        msg = "文件路径：" + myURL.getFile();
+        htmlFormat(msg, "p");
       }
+      htmlFormat("<br />");
+      textArea.append("\r\n");
 
       htmlWrapper(resultStr.toString());
 
@@ -568,7 +590,8 @@ public class CheckPane extends JPanel {
         e.printStackTrace();
       }
       // 弹出窗口提示检查完成，并提示日志位置
-//      JOptionPane.showMessageDialog(null, "检查已完成。\n结果保存在当前目录下的日志文件MDFilesCheckLog.log中。");
+      // JOptionPane.showMessageDialog(null,
+      // "检查已完成。\n结果保存在当前目录下的日志文件MDFilesCheckLog.log中。");
       // 在文本框中显示结果
       // writeMsg("日志文件MDFilesCheckLog.log已生成，保存在当前目录下");
       checkButton.setEnabled(true);

@@ -63,7 +63,7 @@ public class Main {
 
     frame.setSize(fWidth, fHeight);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    frame.setTitle("低检工具");
+    frame.setTitle("发布工具");
     frame.setLayout(new BorderLayout());
 
     // 加入低检选项卡

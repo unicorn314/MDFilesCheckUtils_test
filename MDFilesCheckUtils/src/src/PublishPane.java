@@ -144,7 +144,7 @@ public class PublishPane extends JPanel {
           }
           // 填充下拉框
           comboBox.removeAllItems();
-//          String[] comboBoxTitle = new String[ymlList.size()];
+          // String[] comboBoxTitle = new String[ymlList.size()];
           for (int i = 0; i < ymlList.size(); i++) {
             comboBox.addItem(ymlList.get(i).getBigheader());
           }

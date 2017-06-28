@@ -57,7 +57,7 @@ public class PublishPane extends JPanel {
   final JButton createTreeButton = new JButton("create tree");
 
   // 启动Jekyll按钮
-  final JButton jekyllServeButton = new JButton("jekyll serve");
+  final JButton jekyllServeButton = new JButton("发布html");
 
   JTree tree = new JTree();
 

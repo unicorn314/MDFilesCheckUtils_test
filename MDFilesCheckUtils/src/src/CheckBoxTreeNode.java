@@ -61,21 +61,27 @@ public class CheckBoxTreeNode extends DefaultMutableTreeNode {
 	 * 只选中Auto Select Parent，自动勾选父级节点即使子集节点未全部勾选
 	 */
 	private void parentSelect(boolean _isSelected, String type) {
-		if (_isSelected) {
-			// 向上检查，如果父结点的子结点被选中，那么将父结点也选中
-			CheckBoxTreeNode pNode = (CheckBoxTreeNode) parent;
+		// 向上检查，如果父结点的子结点被选中，那么将父结点也选中
+		CheckBoxTreeNode pNode = (CheckBoxTreeNode) parent;
+//		if (_isSelected) {
 			// 开始检查pNode的子节点是否被选中
 			if (pNode != null) {
 				int index = 0;
 				for (; index < pNode.children.size(); ++index) {
 					CheckBoxTreeNode pChildNode = (CheckBoxTreeNode) pNode.children.get(index);
-					if (pChildNode.isSelected()) {
+//					if (pChildNode.isSelected()) {
+						//递归
 						pNode.setSelected(_isSelected, type);
 						break;
-					}
+//					}
 				}
 			}
-		}
+//		}else{
+//			//取消节点 对应父节点全部取消
+//			if (pNode != null) {
+//				
+//			}
+//		}
 	}
 
 	/*
@@ -93,20 +99,20 @@ public class CheckBoxTreeNode extends DefaultMutableTreeNode {
 			}
 		} else {
 			if (children != null) {
-				int index = 0;
-				for (; index < children.size(); ++index) {
-					CheckBoxTreeNode childNode = (CheckBoxTreeNode) children.get(index);
-					if (!childNode.isSelected())
-						break;
-				}
+//				int index = 0;
+//				for (; index < children.size(); ++index) {
+//					CheckBoxTreeNode childNode = (CheckBoxTreeNode) children.get(index);
+//					if (!childNode.isSelected())
+//						break;
+//				}
 				// 从上向下取消的时候
-				if (index == children.size()) {
+//				if (index == children.size()) {
 					for (int i = 0; i < children.size(); ++i) {
 						CheckBoxTreeNode node = (CheckBoxTreeNode) children.get(i);
 						if (node.isSelected() != _isSelected)
 							node.setSelected(_isSelected, type);
 					}
-				}
+//				}
 			}
 		}
 	}

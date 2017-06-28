@@ -23,7 +23,7 @@ public class CmdProcesser {
   }
   
   public static CmdResult startJekyll(String jekyllPath) throws Exception{
-    return execCmd("cmd /c jekyll serve", new File(jekyllPath));
+    return execCmd("cmd /c bundle exec jekyll serve", new File(jekyllPath));
   }
 
   /**
@@ -43,8 +43,6 @@ public class CmdProcesser {
     try {
       // 执行命令, 返回一个子进程对象（命令在子进程中执行）
       process = Runtime.getRuntime().exec(cmd, null, dir);
-      // 方法阻塞, 等待命令执行完成（成功会返回0）
-      process.waitFor();
       // 获取命令执行结果, 有两个结果: 正常的输出 和 错误的输出（PS: 子进程的输出就是主进程的输入）
       bufrIn = new BufferedReader(new InputStreamReader(process.getInputStream(), "GBK"));
       bufrError = new BufferedReader(new InputStreamReader(process.getErrorStream(), "GBK"));
@@ -59,6 +57,8 @@ public class CmdProcesser {
         result.append(line).append('\n');
         System.out.println(line);
       }
+      // 方法阻塞, 等待命令执行完成（成功会返回0）
+      process.waitFor();
     } finally {
       closeStream(bufrIn);
       closeStream(bufrError);

@@ -36,6 +36,7 @@ import model.NodeObj;
 import model.R;
 import tools.CheckBoxTreeNodeUtils;
 import tools.CmdProcesser;
+import tools.CmdWorker;
 import tools.ListYamlReadUtils;
 
 /**
@@ -164,10 +165,10 @@ public class PublishPane extends JPanel {
         }
 
         try {
-          JekyllServeWorker work = new JekyllServeWorker(rootFolderPath);
-          work.execute();
+          CmdWorker jekyllWorker = new CmdWorker("cmd /c bundle exec jekyll serve",
+              new File(rootFolderPath), logArea);
+          jekyllWorker.execute();
         } catch (Exception e1) {
-          // TODO Auto-generated catch block
           e1.printStackTrace();
         }
       }
@@ -198,13 +199,13 @@ public class PublishPane extends JPanel {
             createPdf = createPdf + " " + savePath;
 
             System.out.println(createPdf);
-            logArea.append("------------------------pdf生成start------------------------\r\n");
-            logArea.append("执行生成pdf命令：" + createPdf + "\r\n");
-            CmdResult result = CmdProcesser.execCmd("cmd /c " + createPdf, null);
-            // JOptionPane.showMessageDialog(null, result);
-            logArea.append(result.getMsg() + "\r\n");
-            logArea.append("生成pdf命令执行完毕，文件路径：" + savePath + "\r\n");
-            logArea.append("------------------------pdf生成end------------------------\r\n\r\n");
+
+            logArea.append("------------------------生成pdf------------------------\n");
+            logArea.append("执行生成pdf命令：" + createPdf + "\n");
+            logArea.append("文件路径：" + savePath + "\n");
+            CmdWorker pdfWorker = new CmdWorker("cmd /c " + createPdf,
+                null, logArea);
+            pdfWorker.execute();
           } catch (Exception exception) {
             exception.printStackTrace();
           }
@@ -244,10 +245,9 @@ public class PublishPane extends JPanel {
     add(panelContainer, BorderLayout.CENTER);
     centerPanel.setLayout(new BorderLayout());
 
-    
     JPanel comboBoxPanel = new JPanel();
     comboBoxPanel.setLayout(new BoxLayout(comboBoxPanel, BoxLayout.Y_AXIS));
-        
+
     // 生成下拉框
     // comboBox.setBounds(5, 13, 590, 24);
     comboBoxPanel.add(comboBox);
@@ -263,9 +263,9 @@ public class PublishPane extends JPanel {
     checkboxPanel.add(chckbxSelectChildren);
 
     comboBoxPanel.add(checkboxPanel);
-    centerPanel.add(comboBoxPanel,BorderLayout.NORTH);
+    centerPanel.add(comboBoxPanel, BorderLayout.NORTH);
 
-    centerPanel.add(scrollPane,BorderLayout.CENTER);
+    centerPanel.add(scrollPane, BorderLayout.CENTER);
 
     // 生成树形图
     scrollPane.setViewportView(tree);
@@ -433,35 +433,6 @@ public class PublishPane extends JPanel {
       }
       // 遍历所有节点，并获得已勾选节点
       getSelectedNodes(root, list);
-    }
-  }
-
-  class JekyllServeWorker extends SwingWorker<CmdResult, Void> {
-
-    private String path;
-    private CmdResult result;
-
-    public JekyllServeWorker(String path) {
-      super();
-      this.path = path;
-    }
-
-    /**
-     * 启动该线程，开始检测所有文件，并同步刷新进度条.
-     */
-    @Override
-    protected CmdResult doInBackground() throws Exception {
-      result = CmdProcesser.startJekyll(path);
-      return result;
-    }
-
-    /**
-     * 将所有错误列表中的检测结果拼成字符串，用于页面展示.
-     */
-    @Override
-    protected void done() {
-      // JOptionPane.showMessageDialog(null, result);
-      logArea.append(result.getMsg() + "\r\n");
     }
   }
 }

@@ -33,13 +33,13 @@ import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
-import model.MyURL;
+import model.MyUrl;
 import tools.HttpLinkChecker;
 import tools.TitleChecker;
 import tools.WrongPathChecker;
 
 /**
- * 
+ * 低检界面.
  * 
  * @author ywx474563 2017年6月26日
  */
@@ -54,10 +54,8 @@ public class CheckPane extends JPanel {
   // 浏览日志按钮
   final JButton logButton = new JButton("browse log");
 
-  final int tWidth = 0;
-  final int tHeight = 0;
-  final int fWidth = 920;
-  final int fHeight = 570;
+  final int frameWidth = 920;
+  final int frameHeight = 570;
   final int fontSize = 20;
 
   JScrollPane scrollPane = new JScrollPane();
@@ -69,23 +67,23 @@ public class CheckPane extends JPanel {
   /**
    * 存放所有失效的引用链接.
    */
-  private List<MyURL> badURLList = new ArrayList<MyURL>();
+  private List<MyUrl> badUrlList = new ArrayList<MyUrl>();
   /**
    * 存放所有错误的include标签内引用路径.
    */
-  private List<MyURL> wrongIncludePathList = new ArrayList<MyURL>();
+  private List<MyUrl> wrongIncludePathList = new ArrayList<MyUrl>();
   /**
    * 存放所有错误的内部引用路径.
    */
-  private List<MyURL> wrongInternalPathList = new ArrayList<MyURL>();
+  private List<MyUrl> wrongInternalPathList = new ArrayList<MyUrl>();
   /**
    * 存放所有字符编码不为UTF-8格式的文件.
    */
-  private List<MyURL> wrongCharsetFile = new ArrayList<MyURL>();
+  private List<MyUrl> wrongCharsetFile = new ArrayList<MyUrl>();
   /**
    * 存放所有title部分格式不正确的文件.
    */
-  private List<MyURL> wrongTitleFile = new ArrayList<MyURL>();
+  private List<MyUrl> wrongTitleFile = new ArrayList<MyUrl>();
   /**
    * 存放最终输出结果的字符串.
    */
@@ -101,12 +99,12 @@ public class CheckPane extends JPanel {
   }
 
   /**
-   * 窗口组件初始化
+   * 窗口组件初始化.
    */
   public CheckPane() {
     super();
 
-    setSize(fWidth, fHeight);
+    setSize(frameWidth, frameHeight);
     setLayout(new BorderLayout());
     textArea.setLineWrap(true); // 激活自动换行功能
     textArea.setWrapStyleWord(true); // 激活断行不断字功能
@@ -177,8 +175,8 @@ public class CheckPane extends JPanel {
    * 
    * @return badURLList
    */
-  public List<MyURL> getBadURLList() {
-    return badURLList;
+  public List<MyUrl> getBadUrlList() {
+    return badUrlList;
   }
 
   /**
@@ -186,7 +184,7 @@ public class CheckPane extends JPanel {
    * 
    * @return wrongIncludePathList
    */
-  public List<MyURL> getWrongIncludePathList() {
+  public List<MyUrl> getWrongIncludePathList() {
     return wrongIncludePathList;
   }
 
@@ -195,7 +193,7 @@ public class CheckPane extends JPanel {
    * 
    * @return wrongInternalPathList
    */
-  public List<MyURL> getWrongInternalPathList() {
+  public List<MyUrl> getWrongInternalPathList() {
     return wrongInternalPathList;
   }
 
@@ -204,7 +202,7 @@ public class CheckPane extends JPanel {
    * 
    * @return wrongCharsetFile
    */
-  public List<MyURL> getWrongCharsetFile() {
+  public List<MyUrl> getWrongCharsetFile() {
     return wrongCharsetFile;
   }
 
@@ -213,7 +211,7 @@ public class CheckPane extends JPanel {
    * 
    * @return wrongTitleFile
    */
-  public List<MyURL> getWrongTitleFile() {
+  public List<MyUrl> getWrongTitleFile() {
     return wrongTitleFile;
   }
 
@@ -257,9 +255,9 @@ public class CheckPane extends JPanel {
    * @param file
    *          输入需要检索的文件
    */
-  public void searchBadURL(final File file) {
+  public void searchBadUrl(final File file) {
     HttpLinkChecker checker = new HttpLinkChecker();
-    badURLList.addAll(checker.searchBadURL(file));
+    badUrlList.addAll(checker.searchBadUrl(file));
   }
 
   /**
@@ -290,11 +288,11 @@ public class CheckPane extends JPanel {
 
           // 检测路径是否可用
           if (!isValidPath(rootPath, includePath.trim())) {
-            MyURL myURL = new MyURL();
-            myURL.setFile(file.getParent() + "\\" + file.getName());
-            myURL.setUrl(includePath);
+            MyUrl myUrl = new MyUrl();
+            myUrl.setFile(file.getParent() + "\\" + file.getName());
+            myUrl.setUrl(includePath);
             // 若路径不可用，将这个网址所属的文件名和网址字符串插入到错误路径list
-            wrongIncludePathList.add(myURL);
+            wrongIncludePathList.add(myUrl);
           }
         }
       }
@@ -332,11 +330,11 @@ public class CheckPane extends JPanel {
   public void checkCharset(final File file) throws FileNotFoundException, IOException {
     String charset = new FileCharsetDetector().guessFileEncoding(file);
     if (!charset.equals("UTF-8")) {
-      MyURL myURL = new MyURL();
-      myURL.setFile(file.getParent() + "\\" + file.getName());
-      myURL.setUrl(charset);
+      MyUrl myUrl = new MyUrl();
+      myUrl.setFile(file.getParent() + "\\" + file.getName());
+      myUrl.setUrl(charset);
       // 将编码不为UTF-8的文件路径和编码格式记入对应list
-      wrongCharsetFile.add(myURL);
+      wrongCharsetFile.add(myUrl);
     }
   }
 
@@ -410,11 +408,11 @@ public class CheckPane extends JPanel {
    * 清空所有list.
    */
   public void cleanAllLists() {
-    badURLList = new ArrayList<MyURL>();
-    wrongIncludePathList = new ArrayList<MyURL>();
-    wrongInternalPathList = new ArrayList<MyURL>();
-    wrongCharsetFile = new ArrayList<MyURL>();
-    wrongTitleFile = new ArrayList<MyURL>();
+    badUrlList = new ArrayList<MyUrl>();
+    wrongIncludePathList = new ArrayList<MyUrl>();
+    wrongInternalPathList = new ArrayList<MyUrl>();
+    wrongCharsetFile = new ArrayList<MyUrl>();
+    wrongTitleFile = new ArrayList<MyUrl>();
     resultStr = new StringBuilder();
     textArea.setText("");
   }
@@ -448,11 +446,11 @@ public class CheckPane extends JPanel {
       for (int i = 0; i < result.size(); i++) { // 循环显示文件
         File file = result.get(i);
         try {
-          searchBadURL(file);
+          searchBadUrl(file);
           searchWrongIncludePath(file, rootPath);
           checkCharset(file);
           searchWrongTitle(file);
-          List<MyURL> wrongIntercalPath = wrongPathChecker.searchWrongIntercalPath(file);
+          List<MyUrl> wrongIntercalPath = wrongPathChecker.searchWrongIntercalPath(file);
           wrongInternalPathList.addAll(wrongIntercalPath);
           jpb.setValue(100 * (i + 1) / result.size());
           // 用于监听器取值
@@ -474,15 +472,15 @@ public class CheckPane extends JPanel {
     protected void done() {
       String msg = "";
       // 所有检查结果都已存入各自的list，开始将最终结果转换为字符串
-      msg = "失效链接总数：" + badURLList.size();
+      msg = "失效链接总数：" + badUrlList.size();
       htmlFormat(msg, "h2");
       textArea.append(msg + "\r\n");
       msg = "处理建议：请检查本地网络是否通畅，链接是否输入正确，若链接被删除，请删除或改用其他网页链接替代";
       htmlFormat(msg, "h4");
       textArea.append(msg + "\r\n");
 
-      for (MyURL myURL : badURLList) {
-        msg = "文件路径：" + myURL.getFile() + " 链接地址：" + myURL.getUrl();
+      for (MyUrl myUrl : badUrlList) {
+        msg = "文件路径：" + myUrl.getFile() + " 链接地址：" + myUrl.getUrl();
         htmlFormat(msg, "p");
       }
       htmlFormat("<br />");
@@ -495,14 +493,14 @@ public class CheckPane extends JPanel {
       htmlFormat(msg, "h4");
       textArea.append(msg + "\r\n");
 
-      for (MyURL myURL : wrongIncludePathList) {
-        String url = myURL.getUrl();
+      for (MyUrl myUrl : wrongIncludePathList) {
+        String url = myUrl.getUrl();
         try {
           url = new String(url.getBytes(), "utf-8");
         } catch (UnsupportedEncodingException e) {
           e.printStackTrace();
         }
-        msg = "文件路径：" + myURL.getFile() + "        引用路径：" + url;
+        msg = "文件路径：" + myUrl.getFile() + "        引用路径：" + url;
         htmlFormat(msg, "p");
       }
       htmlFormat("<br />");
@@ -515,14 +513,14 @@ public class CheckPane extends JPanel {
       htmlFormat(msg, "h4");
       textArea.append(msg + "\r\n");
 
-      for (MyURL myURL : wrongInternalPathList) {
-        String url = myURL.getUrl();
+      for (MyUrl myUrl : wrongInternalPathList) {
+        String url = myUrl.getUrl();
         try {
           url = new String(url.getBytes(), "utf-8");
         } catch (UnsupportedEncodingException e) {
           e.printStackTrace();
         }
-        msg = "文件路径：" + myURL.getFile() + "        引用路径：" + url;
+        msg = "文件路径：" + myUrl.getFile() + "        引用路径：" + url;
         htmlFormat(msg, "p");
       }
       htmlFormat("<br />");
@@ -535,14 +533,14 @@ public class CheckPane extends JPanel {
       htmlFormat(msg, "h4");
       textArea.append(msg + "\r\n");
 
-      for (MyURL myURL : wrongCharsetFile) {
-        String url = myURL.getUrl();
+      for (MyUrl myUrl : wrongCharsetFile) {
+        String url = myUrl.getUrl();
         try {
           url = new String(url.getBytes(), "utf-8");
         } catch (UnsupportedEncodingException e) {
           e.printStackTrace();
         }
-        msg = "文件路径：" + myURL.getFile() + "        编码格式：" + url;
+        msg = "文件路径：" + myUrl.getFile() + "        编码格式：" + url;
         htmlFormat(msg, "p");
       }
       htmlFormat("<br />");
@@ -557,8 +555,8 @@ public class CheckPane extends JPanel {
       textArea.append(msg + "\r\n");
       htmlFormat(msg.replace("\r\n", "<br />"), "h4");
 
-      for (MyURL myURL : wrongTitleFile) {
-        msg = "文件路径：" + myURL.getFile();
+      for (MyUrl myUrl : wrongTitleFile) {
+        msg = "文件路径：" + myUrl.getFile();
         htmlFormat(msg, "p");
       }
       htmlFormat("<br />");

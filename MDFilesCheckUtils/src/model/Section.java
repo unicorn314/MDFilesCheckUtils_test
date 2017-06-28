@@ -1,56 +1,59 @@
 package model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 
 public class Section {
 
-    private String title;
-	
-	private String path;
-	
-	private String workflow;
+  private String title;
 
-	private String flow_title;
+  private String path;
 
-	private List<Section> section;
+  private String workflow;
 
-	public String getTitle() {
-		return title;
-	}
+  @JsonProperty("flow_title")
+  private String flowTitle;
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+  private List<Section> section;
 
-	public String getPath() {
-		return path;
-	}
+  public String getTitle() {
+    return title;
+  }
 
-	public void setPath(String path) {
-		this.path = path;
-	}
+  public void setTitle(String title) {
+    this.title = title;
+  }
 
-	public String getWorkflow() {
-		return workflow;
-	}
+  public String getPath() {
+    return path;
+  }
 
-	public void setWorkflow(String workflow) {
-		this.workflow = workflow;
-	}
+  public void setPath(String path) {
+    this.path = path;
+  }
 
-	public String getFlow_title() {
-		return flow_title;
-	}
+  public String getWorkflow() {
+    return workflow;
+  }
 
-	public void setFlow_title(String flow_title) {
-		this.flow_title = flow_title;
-	}
+  public void setWorkflow(String workflow) {
+    this.workflow = workflow;
+  }
 
-	public List<Section> getSection() {
-		return section;
-	}
+  public String getFlow_title() {
+    return flowTitle;
+  }
 
-	public void setSection(List<Section> section) {
-		this.section = section;
-	}
+  public void setFlow_title(String flowTitle) {
+    this.flowTitle = flowTitle;
+  }
+
+  public List<Section> getSection() {
+    return section;
+  }
+
+  public void setSection(List<Section> section) {
+    this.section = section;
+  }
 }

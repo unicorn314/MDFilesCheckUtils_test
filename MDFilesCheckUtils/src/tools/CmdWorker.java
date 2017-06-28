@@ -11,20 +11,24 @@ import java.util.List;
 import javax.swing.JTextArea;
 import javax.swing.SwingWorker;
 
-import model.CmdResult;
-
 /**
  * cmd命令后台任务.
  * 
  * @author ywx474563 2017年6月28日
  */
 public class CmdWorker extends SwingWorker<List<String>, String> {
-  
+
   private JTextArea textArea;
   private String cmd;
   private File dir;
   private List<String> result;
-  
+
+  /**
+   * cmd后台线程构造函数.
+   * @param cmd cmd命令
+   * @param dir 执行命令文件夹
+   * @param textArea 显示消息TextArea
+   */
   public CmdWorker(String cmd, File dir, JTextArea textArea) {
     super();
     this.cmd = cmd;
@@ -43,8 +47,10 @@ public class CmdWorker extends SwingWorker<List<String>, String> {
       // 执行命令, 返回一个子进程对象（命令在子进程中执行）
       process = Runtime.getRuntime().exec(cmd, null, dir);
       // 获取命令执行结果, 有两个结果: 正常的输出 和 错误的输出（PS: 子进程的输出就是主进程的输入）
-      bufrIn = new BufferedReader(new InputStreamReader(process.getInputStream(), "GBK"));
-      bufrError = new BufferedReader(new InputStreamReader(process.getErrorStream(), "GBK"));
+      bufrIn = new BufferedReader(
+          new InputStreamReader(process.getInputStream(), "GBK"));
+      bufrError = new BufferedReader(
+          new InputStreamReader(process.getErrorStream(), "GBK"));
       // 读取输出
       String line = null;
       while ((line = bufrIn.readLine()) != null) {
@@ -69,7 +75,7 @@ public class CmdWorker extends SwingWorker<List<String>, String> {
     // 返回执行结果
     return result;
   }
-  
+
   private static void closeStream(Closeable stream) {
     if (stream != null) {
       try {
@@ -86,7 +92,7 @@ public class CmdWorker extends SwingWorker<List<String>, String> {
     for (String line : chunks) {
       textArea.append(line + "\n");
       System.out.println(line);
-  }
+    }
 
   }
 
@@ -94,6 +100,5 @@ public class CmdWorker extends SwingWorker<List<String>, String> {
   protected void done() {
     super.done();
   }
-  
-  
+
 }

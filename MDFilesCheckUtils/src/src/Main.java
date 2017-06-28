@@ -19,8 +19,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
-import tools.CmdProcesser;
-
 /**
  * 主界面.
  * 
@@ -30,12 +28,10 @@ public class Main {
   /**
    * 存放选项卡的组件.
    */
-  private JTabbedPane jTabbedpane = new JTabbedPane();
+  private JTabbedPane tabPane = new JTabbedPane();
 
-  final int tWidth = 0;
-  final int tHeight = 0;
-  final int fWidth = 920;
-  final int fHeight = 570;
+  final int frameWidth = 920;
+  final int frameHeight = 570;
   final int fontSize = 20;
   // 新建主窗口
   JFrame frame = new JFrame();
@@ -50,31 +46,31 @@ public class Main {
   private PublishPane publishPane;
 
   /**
-   * 默认构造方法，所有窗口组件初始化
+   * 默认构造方法，所有窗口组件初始化.
    */
   public Main() {
     init();
   }
 
   /**
-   * 窗口组件初始化
+   * 窗口组件初始化.
    */
   private void init() {
 
-    frame.setSize(fWidth, fHeight);
+    frame.setSize(frameWidth, frameHeight);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.setTitle("发布工具");
     frame.setLayout(new BorderLayout());
 
     // 加入低检选项卡
     checkPane = new CheckPane();
-    jTabbedpane.addTab("低检", null, checkPane, "check");
+    tabPane.addTab("低检", null, checkPane, "check");
 
     // 加入离线发布选项卡
     publishPane = new PublishPane();
-    jTabbedpane.addTab("离线发布", null, publishPane, "publish");
+    tabPane.addTab("离线发布", null, publishPane, "publish");
 
-    frame.add(jTabbedpane, BorderLayout.CENTER);
+    frame.add(tabPane, BorderLayout.CENTER);
 
     // 文件夹路径显示框
     final TextField rootFolderTextField = new TextField(50);

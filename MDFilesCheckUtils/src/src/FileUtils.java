@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 
+ * 文件帮助类.
  * 
  * @author ywx474563 2017年6月26日
  */

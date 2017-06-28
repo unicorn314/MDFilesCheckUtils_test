@@ -30,12 +30,10 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
-import model.CmdResult;
 import model.ListYml;
 import model.NodeObj;
 import model.R;
 import tools.CheckBoxTreeNodeUtils;
-import tools.CmdProcesser;
 import tools.CmdWorker;
 import tools.ListYamlReadUtils;
 
@@ -75,11 +73,11 @@ public class PublishPane extends JPanel {
   int comboBoxSelectIndex = 0;
 
   /**
-   * 存放配置文件中读取的页面列表对象集合
+   * 存放配置文件中读取的页面列表对象集合.
    */
   private List<ListYml> ymlList = new ArrayList<ListYml>();
   /**
-   * 存放树形图中已勾选对象的集合
+   * 存放树形图中已勾选对象的集合.
    */
   private List<NodeObj> nodeObjList = new ArrayList<NodeObj>();
 
@@ -92,18 +90,18 @@ public class PublishPane extends JPanel {
   }
 
   /**
-   * 树形图复选框勾选模式
+   * 树形图复选框勾选模式.
    */
   private String checkType;
-  final int fWidth = 920;
-  final int fHeight = 570;
+  final int frameWidth = 920;
+  final int frameHeight = 570;
 
   public void setRootFolderPath(String rootFolderPath) {
     this.rootFolderPath = rootFolderPath;
   }
 
   /**
-   * 窗口组件初始化
+   * 窗口组件初始化.
    */
   public PublishPane() {
     super();
@@ -121,7 +119,7 @@ public class PublishPane extends JPanel {
     DefaultTreeModel model = new DefaultTreeModel(new CheckBoxTreeNode());
     tree.setModel(model);
 
-    setSize(fWidth, fHeight);
+    setSize(frameWidth, frameHeight);
     setLayout(new BorderLayout());
 
     // 主窗口center部分（中间的下拉框和树形图）
@@ -300,7 +298,7 @@ public class PublishPane extends JPanel {
   }
 
   /**
-   * 生成窗口主页面中的树形图
+   * 生成窗口主页面中的树形图.
    * 
    * @param index
    *          下拉框的被选中项
@@ -346,7 +344,7 @@ public class PublishPane extends JPanel {
   }
 
   /**
-   * 树形图鼠标监听器
+   * 树形图鼠标监听器.
    * 
    * @author SunYichuan
    */
@@ -354,7 +352,7 @@ public class PublishPane extends JPanel {
     List<NodeObj> list;
 
     /**
-     * 鼠标点击监听器
+     * 鼠标点击监听器.
      */
     @Override
     public void mouseClicked(MouseEvent event) {
@@ -415,7 +413,7 @@ public class PublishPane extends JPanel {
     List<NodeObj> list;
 
     /**
-     * 鼠标点击监听器
+     * 鼠标点击监听器.
      */
     @Override
     public void mouseClicked(MouseEvent event) {

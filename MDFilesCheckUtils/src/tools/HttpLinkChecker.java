@@ -116,6 +116,8 @@ public class HttpLinkChecker {
         lineReader.close();
       } catch (IOException e) {
         e.printStackTrace();
+      } catch (NullPointerException e) {
+        e.printStackTrace();
       }
     }
   }

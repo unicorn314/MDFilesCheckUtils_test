@@ -133,16 +133,18 @@ public class PublishPane extends JPanel {
         if (rootFolderPath != null && !"".equals(rootFolderPath)) {
           // 如果已经选择过文件夹，开始生成页面列表
           ListYamlReadUtils util = new ListYamlReadUtils();
-          List<File> fileList = FileUtils.searchFile(new File(rootFolderPath + "\\_data"));
+          List<File> fileList = FileUtils
+              .searchFile(new File(rootFolderPath + "\\_data"));
           ymlList = new ArrayList<ListYml>();
           for (File f : fileList) {
-            if (util.ymlToObject(f) != null && util.ymlToObject(f).getBigheader() != null) {
+            if (util.ymlToObject(f) != null
+                && util.ymlToObject(f).getBigheader() != null) {
               ymlList.add(util.ymlToObject(f));
             }
           }
           // 填充下拉框
           comboBox.removeAllItems();
-          String[] comboBoxTitle = new String[ymlList.size()];
+//          String[] comboBoxTitle = new String[ymlList.size()];
           for (int i = 0; i < ymlList.size(); i++) {
             comboBox.addItem(ymlList.get(i).getBigheader());
           }
@@ -163,8 +165,9 @@ public class PublishPane extends JPanel {
         }
 
         try {
-          CmdWorker jekyllWorker = new CmdWorker("cmd /c bundle exec jekyll serve",
-              new File(rootFolderPath), logArea);
+          CmdWorker jekyllWorker = new CmdWorker(
+              "cmd /c bundle exec jekyll serve", new File(rootFolderPath),
+              logArea);
           jekyllWorker.execute();
         } catch (Exception e1) {
           e1.printStackTrace();
@@ -179,14 +182,15 @@ public class PublishPane extends JPanel {
           try {
             List<NodeObj> list = new ArrayList<NodeObj>();
             CheckBoxTreeNode root = (CheckBoxTreeNode) tree
-                .getPathForRow(tree.getRowForLocation(0, 0)).getLastPathComponent();
+                .getPathForRow(tree.getRowForLocation(0, 0))
+                .getLastPathComponent();
             // 获得所有已勾选节点
             getSelectedNodes(root, list);
             String createPdf = "wkhtmltopdf toc ";
             for (NodeObj nodeobj : list) {
               if (nodeobj.getPath() != null && !nodeobj.toString().equals("")) {
-                String str = nodeobj.getPath().replace(rootFolderPath, "").replace("\\", "/")
-                    .replace(".md", ".html");
+                String str = nodeobj.getPath().replace(rootFolderPath, "")
+                    .replace("\\", "/").replace(".md", ".html");
                 str = "localhost:4000" + str;
                 createPdf = createPdf + str + " ";
               }
@@ -198,11 +202,12 @@ public class PublishPane extends JPanel {
 
             System.out.println(createPdf);
 
-            logArea.append("------------------------生成pdf------------------------\n");
+            logArea.append(
+                "------------------------生成pdf------------------------\n");
             logArea.append("执行生成pdf命令：" + createPdf + "\n");
             logArea.append("文件路径：" + savePath + "\n");
-            CmdWorker pdfWorker = new CmdWorker("cmd /c " + createPdf,
-                null, logArea);
+            CmdWorker pdfWorker = new CmdWorker("cmd /c " + createPdf, null,
+                logArea);
             pdfWorker.execute();
           } catch (Exception exception) {
             exception.printStackTrace();
@@ -374,8 +379,8 @@ public class PublishPane extends JPanel {
       }
       list = new ArrayList<NodeObj>();
       // 获得根节点
-      CheckBoxTreeNode root = (CheckBoxTreeNode) tree.getPathForRow(tree.getRowForLocation(0, 0))
-          .getLastPathComponent();
+      CheckBoxTreeNode root = (CheckBoxTreeNode) tree
+          .getPathForRow(tree.getRowForLocation(0, 0)).getLastPathComponent();
       // 遍历所有节点，并获得已勾选节点
       getSelectedNodes(root, list);
       show(list);
@@ -397,13 +402,16 @@ public class PublishPane extends JPanel {
     if (!chckbxSelectParent.isSelected() && chckbxSelectChildren.isSelected()) {
       // 如果只勾选规则“选择子节点”
       checkType = R.SUBNODES;
-    } else if (chckbxSelectParent.isSelected() && !chckbxSelectChildren.isSelected()) {
+    } else if (chckbxSelectParent.isSelected()
+        && !chckbxSelectChildren.isSelected()) {
       // 如果只勾选规则“选择父节点”
       checkType = R.PARENT;
-    } else if (!chckbxSelectParent.isSelected() && !chckbxSelectChildren.isSelected()) {
+    } else if (!chckbxSelectParent.isSelected()
+        && !chckbxSelectChildren.isSelected()) {
       // 如果规则“选择父节点”和“选择子节点”都没勾选
       checkType = "";
-    } else if (chckbxSelectParent.isSelected() && chckbxSelectChildren.isSelected()) {
+    } else if (chckbxSelectParent.isSelected()
+        && chckbxSelectChildren.isSelected()) {
       // 如果规则“选择父节点”和“选择子节点”都被勾选
       checkType = R.SUBNODES_AND_PARENT;
     }
@@ -422,14 +430,15 @@ public class PublishPane extends JPanel {
       // 点击后改变复选框状态
       list = new ArrayList<NodeObj>();
       // 获得根节点
-      CheckBoxTreeNode root = (CheckBoxTreeNode) tree.getPathForRow(tree.getRowForLocation(0, 0))
-          .getLastPathComponent();
-      // 遍历所有节点，并获得已勾选节点
-      if (root != null) {
+      CheckBoxTreeNode root = (CheckBoxTreeNode) tree
+          .getPathForRow(tree.getRowForLocation(0, 0)).getLastPathComponent();
 
-        root.setSelected(!root.isSelected, R.SUBNODES_AND_PARENT);
-        ((DefaultTreeModel) tree.getModel()).nodeStructureChanged(root);
+      if (root == null) {
+        return;
       }
+      // 遍历所有节点，并获得已勾选节点
+      root.setSelected(!root.isSelected, R.SUBNODES_AND_PARENT);
+      ((DefaultTreeModel) tree.getModel()).nodeStructureChanged(root);
       // 遍历所有节点，并获得已勾选节点
       getSelectedNodes(root, list);
     }

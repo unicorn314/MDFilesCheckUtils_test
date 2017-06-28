@@ -393,7 +393,7 @@ public class PublishPane extends JPanel {
   /**
    * 从状态复选框中获得目前的复选框勾选状态.
    */
-  private void getCheckType() {
+  public String getCheckType() {
     if (!chckbxSelectParent.isSelected() && chckbxSelectChildren.isSelected()) {
       // 如果只勾选规则“选择子节点”
       checkType = R.SUBNODES;
@@ -407,6 +407,7 @@ public class PublishPane extends JPanel {
       // 如果规则“选择父节点”和“选择子节点”都被勾选
       checkType = R.SUBNODES_AND_PARENT;
     }
+    return checkType;
   }
 
   class CheckBoxSelectAllListener extends MouseAdapter {

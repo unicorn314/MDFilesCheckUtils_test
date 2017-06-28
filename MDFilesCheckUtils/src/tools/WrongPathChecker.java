@@ -138,8 +138,8 @@ public class WrongPathChecker {
     Pattern intercalPattern = Pattern.compile(intercalRex);
     // 检查是否为外部网址链接的正则
     String httpRex = "(http://|ftp://|https://)"
-        + "[^\u4e00-\u9fa5\\s\"\'\\()]*?\\."
-        + "(com|net|cn|me|tw|fr|edu)[^\u4e00-\u9fa5\\s\"\'\\()]*";
+        + "[^\\s\"\'\\()]*?\\."
+        + "(com|net|cn|me|tw|fr|edu)[^\\s\"\'\\()]*";
     Pattern httpPattern = Pattern.compile(httpRex);
     // 检测是否为锚点链接[文字](#锚点位置)的正则
     String anchorRex = "^\\#";

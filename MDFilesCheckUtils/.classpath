@@ -18,5 +18,17 @@
 	<classpathentry kind="lib" path="lib/jchardet-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/json-lib-2.2.3-jdk15.jar"/>
 	<classpathentry kind="lib" path="lib/snakeyaml-1.17.jar"/>
+	<classpathentry kind="lib" path="lib/barcodes-7.0.3.jar"/>
+	<classpathentry kind="lib" path="lib/font-asian-7.0.3.jar"/>
+	<classpathentry kind="lib" path="lib/forms-7.0.3.jar"/>
+	<classpathentry kind="lib" path="lib/hyph-7.0.3.jar"/>
+	<classpathentry kind="lib" path="lib/io-7.0.3.jar"/>
+	<classpathentry kind="lib" path="lib/kernel-7.0.3.jar"/>
+	<classpathentry kind="lib" path="lib/layout-7.0.3.jar"/>
+	<classpathentry kind="lib" path="lib/pdfa-7.0.3.jar"/>
+	<classpathentry kind="lib" path="lib/sign-7.0.3.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.17.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-api-1.7.25.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-log4j12-1.7.25.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

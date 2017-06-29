@@ -19,6 +19,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
+import org.apache.log4j.PropertyConfigurator;
+
 /**
  * 主界面.
  * 
@@ -116,6 +118,7 @@ public class Main {
    *          ...
    */
   public static void main(final String[] args) { // java程序的主入口处
+    PropertyConfigurator.configure("log4j.properties");
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {

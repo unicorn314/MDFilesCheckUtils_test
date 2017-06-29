@@ -1,10 +1,5 @@
 package src;
 
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.utils.PdfMerger;
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -39,6 +34,28 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
+
+import com.itextpdf.io.font.FontConstants;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.action.PdfAction;
+import com.itextpdf.kernel.pdf.canvas.draw.DottedLine;
+import com.itextpdf.kernel.utils.PdfMerger;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Tab;
+import com.itextpdf.layout.element.TabStop;
+import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.TabAlignment;
+import com.itextpdf.layout.property.TextAlignment;
 
 import model.ListYml;
 import model.NodeObj;
@@ -140,6 +157,11 @@ public class PublishPane extends JPanel {
     // "create tree"按钮添加点击生成页面列表事件
     createTreeButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
+        String pdfsDirPath = System.getProperty("user.dir") + "\\pdfs";
+        File pdfsDir = new File(pdfsDirPath);
+        if (!pdfsDir.exists()) {
+          pdfsDir.mkdirs();
+        }
         if (rootFolderPath != null && !"".equals(rootFolderPath)) {
           // 如果已经选择过文件夹，开始生成页面列表
           ListYamlReadUtils util = new ListYamlReadUtils();
@@ -212,6 +234,7 @@ public class PublishPane extends JPanel {
                 "------------------------生成pdf------------------------\n");
             List<String> cmds = new ArrayList<>();
             List<String> sourcePaths = new ArrayList<>();
+            List<NodeObj> validList = new ArrayList<>();
             for (NodeObj nodeobj : list) {
               if (nodeobj.getPath() != null && !nodeobj.toString().equals("")) {
                 String str = nodeobj.getPath().replace(rootFolderPath, "")
@@ -224,6 +247,7 @@ public class PublishPane extends JPanel {
                 cmds.add(cmd);
                 logArea.append("执行生成pdf命令：" + cmd + "\n");
                 sourcePaths.add(savePath);
+                validList.add(new NodeObj(nodeobj.getName(), savePath));
               }
             }
             btnHtmlToPdf.setEnabled(false);
@@ -236,7 +260,7 @@ public class PublishPane extends JPanel {
                     + System.currentTimeMillis() + ".pdf";
                 logArea.append("--------合并pdf开始--------\n");
                 logArea.append("合并pdf文件路径：" + destPdf + "\n");
-                mergePdf(sourcePaths, destPdf);
+                mergePdf(validList, destPdf);
                 logArea.append("--------合并pdf结束--------\n");
                 createLogFile("pdf");
               }
@@ -478,14 +502,41 @@ public class PublishPane extends JPanel {
     }
   }
 
-  private void mergePdf(List<String> sourcePaths, String destPdf) {
+  private void mergePdf(List<NodeObj> nodes, String destPdf) {
     try {
 
       PdfDocument pdf = new PdfDocument(new PdfWriter(destPdf));
+      Document document = new Document(pdf);
+      PdfFont font = PdfFontFactory.createFont("STSong-Light", "UniGB-UCS2-H", false);
+      document.setFont(font);
+      document.add(new Paragraph(new Text("目录"))
+          .setTextAlignment(TextAlignment.CENTER));
       PdfMerger merger = new PdfMerger(pdf);
-      for (String sourcePath : sourcePaths) {
-        PdfDocument sourcePdf = new PdfDocument(new PdfReader(sourcePath));
-        merger.merge(sourcePdf, 1, sourcePdf.getNumberOfPages());
+      int index =2;
+      for (NodeObj node : nodes) {
+        PdfDocument sourcePdf = new PdfDocument(new PdfReader(node.getPath()));
+        PdfMerger pdfMerger = merger.merge(sourcePdf, 1,
+            sourcePdf.getNumberOfPages());
+
+        PdfPage page = pdf.getPage(index);
+        String destinationKey = "p" + (pdf.getNumberOfPages() - 1);
+        PdfArray destinationArray = new PdfArray();
+        destinationArray.add(page.getPdfObject());
+        destinationArray.add(PdfName.XYZ);
+        destinationArray.add(new PdfNumber(0));
+        destinationArray.add(new PdfNumber(page.getMediaBox().getHeight()));
+        destinationArray.add(new PdfNumber(1));
+        pdf.addNamedDestination(destinationKey, destinationArray);
+        
+        Paragraph p = new Paragraph();
+        p.addTabStops(new TabStop(540, TabAlignment.RIGHT, new DottedLine()));
+        p.add(node.getName());
+        p.add(new Tab());
+        p.add(index + "");
+        p.setProperty(Property.ACTION, PdfAction.createGoTo(destinationKey));
+        document.add(p);
+
+        index+=sourcePdf.getNumberOfPages();
         sourcePdf.close();
       }
       pdf.close();

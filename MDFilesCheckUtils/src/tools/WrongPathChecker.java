@@ -146,7 +146,8 @@ public class WrongPathChecker {
     Pattern anchorPattern = Pattern.compile(anchorRex);
     LineNumberReader lineReader = null;
     try {
-      lineReader = new LineNumberReader(new FileReader(file));
+      lineReader = new LineNumberReader(new BufferedReader(
+          new InputStreamReader(new FileInputStream(file), "UTF-8")));
       String readLine = null;
 
       // 读取文件内容

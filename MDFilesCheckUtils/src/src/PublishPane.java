@@ -224,7 +224,7 @@ public class PublishPane extends JPanel {
             public void propertyChange(PropertyChangeEvent evt) {
               if ("progress".equals(evt.getPropertyName())) {
                 jpb.setValue((Integer) evt.getNewValue());
-                label.setText(evt.getNewValue()+"%");
+                label.setText(evt.getNewValue() + "%");
               }
             }
           });
@@ -293,7 +293,7 @@ public class PublishPane extends JPanel {
               public void propertyChange(PropertyChangeEvent evt) {
                 if ("progress".equals(evt.getPropertyName())) {
                   jpb.setValue((Integer) evt.getNewValue());
-                  label.setText(evt.getNewValue()+"%");
+                  label.setText(evt.getNewValue() + "%");
                 }
               }
             });

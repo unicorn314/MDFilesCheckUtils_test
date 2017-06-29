@@ -18,7 +18,6 @@
 	<classpathentry kind="lib" path="lib/jchardet-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/json-lib-2.2.3-jdk15.jar"/>
 	<classpathentry kind="lib" path="lib/snakeyaml-1.17.jar"/>
-	<classpathentry kind="lib" path="lib/barcodes-7.0.3.jar"/>
 	<classpathentry kind="lib" path="lib/font-asian-7.0.3.jar"/>
 	<classpathentry kind="lib" path="lib/forms-7.0.3.jar"/>
 	<classpathentry kind="lib" path="lib/hyph-7.0.3.jar"/>

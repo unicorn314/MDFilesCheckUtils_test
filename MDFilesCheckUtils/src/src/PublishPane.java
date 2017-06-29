@@ -2,22 +2,19 @@ package src;
 
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
-import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfOutline;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.canvas.draw.DottedLine;
+import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.utils.PdfMerger;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Tab;
 import com.itextpdf.layout.element.TabStop;
 import com.itextpdf.layout.element.Text;
-import com.itextpdf.layout.property.Property;
 import com.itextpdf.layout.property.TabAlignment;
 import com.itextpdf.layout.property.TextAlignment;
 
@@ -61,6 +58,7 @@ import model.NodeObj;
 import model.R;
 import tools.CheckBoxTreeNodeUtils;
 import tools.CmdWorker;
+import tools.HttpLinkChecker;
 import tools.ListYamlReadUtils;
 
 /**
@@ -233,20 +231,23 @@ public class PublishPane extends JPanel {
             logArea.append(
                 "------------------------生成pdf------------------------\n");
             List<String> cmds = new ArrayList<>();
-            List<String> sourcePaths = new ArrayList<>();
             List<NodeObj> validList = new ArrayList<>();
+            HttpLinkChecker httpLinkChecker = new HttpLinkChecker();
             for (NodeObj nodeobj : list) {
               if (nodeobj.getPath() != null && !nodeobj.toString().equals("")) {
-                String str = nodeobj.getPath().replace(rootFolderPath, "")
-                    .replace("\\", "/").replace(".md", ".html");
-                str = "127.0.0.1:4000" + str;
-
                 String savePath = System.getProperty("user.dir")
                     + "\\pdfs\\htmlToPdf" + UUID.randomUUID() + ".pdf";
-                String cmd = "cmd /c wkhtmltopdf " + str + " " + savePath;
+                String cmd = "";
+                if (!httpLinkChecker.isHttpLink(nodeobj.getPath())) {
+                  String str = nodeobj.getPath().replace(rootFolderPath, "")
+                      .replace("\\", "/").replace(".md", ".html");
+                  str = "127.0.0.1:4000" + str;
+                  cmd = "cmd /c wkhtmltopdf " + str + " " + savePath;
+                } else {
+                  cmd = "cmd /c wkhtmltopdf " + nodeobj.getPath() + " " + savePath;
+                }
                 cmds.add(cmd);
                 logArea.append("执行生成pdf命令：" + cmd + "\n");
-                sourcePaths.add(savePath);
                 validList.add(new NodeObj(nodeobj.getName(), savePath));
               }
             }
@@ -496,37 +497,29 @@ public class PublishPane extends JPanel {
 
   private void mergePdf(List<NodeObj> nodes, String destPdf) {
     try {
-      PdfDocument pdf = new PdfDocument(new PdfWriter(destPdf));
-      Document document = new Document(pdf);
+      if (nodes == null || nodes.size() == 0) {
+        return;
+      }
       PdfFont font = PdfFontFactory.createFont("STSong-Light", "UniGB-UCS2-H",
           false);
+
+      PdfDocument pdf = new PdfDocument(new PdfWriter(destPdf));
+      Document document = new Document(pdf);
       document.setFont(font);
-      document.add(
-          new Paragraph(new Text("目录")).setTextAlignment(TextAlignment.CENTER));
       PdfMerger merger = new PdfMerger(pdf);
-      int index = 2;
+
+      int index = 1;
+
+      PdfOutline rootOutline = pdf.getOutlines(false);
+
       for (NodeObj node : nodes) {
         PdfDocument sourcePdf = new PdfDocument(new PdfReader(node.getPath()));
-        PdfMerger pdfMerger = merger.merge(sourcePdf, 1,
-            sourcePdf.getNumberOfPages());
+        merger.merge(sourcePdf, 1, sourcePdf.getNumberOfPages());
 
         PdfPage page = pdf.getPage(index);
-        final String destinationKey = "p" + (pdf.getNumberOfPages() - 1);
-        PdfArray destinationArray = new PdfArray();
-        destinationArray.add(page.getPdfObject());
-        destinationArray.add(PdfName.XYZ);
-        destinationArray.add(new PdfNumber(0));
-        destinationArray.add(new PdfNumber(page.getMediaBox().getHeight()));
-        destinationArray.add(new PdfNumber(1));
-        pdf.addNamedDestination(destinationKey, destinationArray);
 
-        Paragraph p = new Paragraph();
-        p.addTabStops(new TabStop(540, TabAlignment.RIGHT, new DottedLine()));
-        p.add(node.getName());
-        p.add(new Tab());
-        p.add(index + "");
-        p.setProperty(Property.ACTION, PdfAction.createGoTo(destinationKey));
-        document.add(p);
+        PdfOutline subOutline = rootOutline.addOutline(node.getName());
+        subOutline.addDestination(PdfExplicitDestination.createFit(page));
 
         index += sourcePdf.getNumberOfPages();
         sourcePdf.close();
@@ -534,6 +527,47 @@ public class PublishPane extends JPanel {
       pdf.close();
     } catch (Exception e) {
       e.printStackTrace();
+    } finally {
+      // 删除目录pdf文件
+      File toc = new File(destPdf.replace(".pdf", "_toc.pdf"));
+      if (toc.exists()) {
+        toc.delete();
+      }
+    }
+  }
+
+  private int getTocIndex(List<NodeObj> nodes, String tocPdfPath) {
+    PdfDocument tocPdf = null;
+    try {
+      PdfFont font = PdfFontFactory.createFont("STSong-Light", "UniGB-UCS2-H",
+          false);
+
+      tocPdf = new PdfDocument(new PdfWriter(tocPdfPath));
+      Document tocDocument = new Document(tocPdf);
+      tocDocument.setFont(font);
+      tocDocument.add(
+          new Paragraph(new Text("目录")).setTextAlignment(TextAlignment.CENTER));
+
+      for (NodeObj node : nodes) {
+
+        Paragraph p = new Paragraph();
+        p.addTabStops(new TabStop(540, TabAlignment.RIGHT, new DottedLine()));
+        p.add(node.getName());
+        p.add(new Tab());
+        tocDocument.add(p);
+
+        PdfDocument sourcePdf = new PdfDocument(new PdfReader(node.getPath()));
+        sourcePdf.close();
+      }
+      return tocPdf.getNumberOfPages() + 1;
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      return 0;
+    } finally {
+      if (tocPdf != null) {        
+        tocPdf.close();
+      }
     }
   }
 

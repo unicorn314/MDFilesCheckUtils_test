@@ -128,15 +128,25 @@ public class ListYamlReadUtils {
   public void fillToc(String rootPath, List<Section> toc)
       throws FileNotFoundException, IOException {
     TitleChecker titleChecker = new TitleChecker();
+    HttpLinkChecker httpLinkChecker = new HttpLinkChecker();
     // 遍历Section集合
     for (Section section : toc) {
       if (section.getPath() != null) {
-        // 如果有path，将相对路径改为绝对路径
-        String abPath = rootPath + section.getPath().replace("/", "\\");
-        section.setPath(abPath);
-        if (section.getTitle() == null) {
-          // 如果有path而没有title，从对应文件中读取title
-          section.setTitle(titleChecker.getTitle(new File(abPath)));
+        if (!httpLinkChecker.isHttpLink(section.getPath())) {
+          // 如果有path，将相对路径改为绝对路径
+          String abPath = rootPath + section.getPath().replace("/", "\\");
+          section.setPath(abPath);
+          if (section.getTitle() == null) {
+            // 如果有path而没有title，从对应文件中读取title
+            section.setTitle(titleChecker.getTitle(new File(abPath)));
+          }
+        } else {
+          String abPath = section.getPath();
+          section.setPath(abPath);
+          if (section.getTitle() == null) {
+            // 如果有path而没有title，从对应文件中读取title
+            section.setTitle(titleChecker.getTitle(new File(abPath)));
+          }
         }
       }
       if (section.getSection() != null) {

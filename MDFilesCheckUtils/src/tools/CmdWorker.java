@@ -47,8 +47,8 @@ public abstract class CmdWorker extends SwingWorker<List<String>, String> {
     BufferedReader bufrIn = null;
     BufferedReader bufrError = null;
     try {
+      int i = 1;
       for (String cmd : cmds) {
-
         // 执行命令, 返回一个子进程对象（命令在子进程中执行）
         process = Runtime.getRuntime().exec(cmd, null, dir);
         // 获取命令执行结果, 有两个结果: 正常的输出 和 错误的输出（PS: 子进程的输出就是主进程的输入）
@@ -66,6 +66,10 @@ public abstract class CmdWorker extends SwingWorker<List<String>, String> {
           publish(line);
           result.add(line);
         }
+
+        setProgress(100 * i / cmds.size());
+        i++;
+        
         // 方法阻塞, 等待命令执行完成（成功会返回0）
         process.waitFor();
       }

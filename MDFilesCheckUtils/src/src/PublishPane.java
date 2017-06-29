@@ -1,40 +1,5 @@
 package src;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.UUID;
-
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTree;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
-
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -52,6 +17,45 @@ import com.itextpdf.layout.element.TabStop;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.TabAlignment;
 import com.itextpdf.layout.property.TextAlignment;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.UUID;
+
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTree;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
 
 import model.ListYml;
 import model.NodeObj;
@@ -90,6 +94,9 @@ public class PublishPane extends JPanel {
   JCheckBox chckbxSelectAll = new JCheckBox("select all");
   JCheckBox chckbxSelectParent = new JCheckBox("select parent");
   JCheckBox chckbxSelectChildren = new JCheckBox("select children");
+
+  final JLabel label = new JLabel();
+  final JProgressBar jpb = new JProgressBar();
 
   JTextArea logArea = new JTextArea();
 
@@ -146,6 +153,12 @@ public class PublishPane extends JPanel {
 
     setSize(frameWidth, frameHeight);
     setLayout(new BorderLayout());
+
+    // 主窗口south部分（底部按钮及进度条）
+    JPanel southPanel = new JPanel(new FlowLayout());
+    southPanel.add(jpb);
+    southPanel.add(label);
+    add(southPanel, BorderLayout.SOUTH);
 
     // 主窗口center部分（中间的下拉框和树形图）
     // textArea.setFont(new Font("黑体", Font.BOLD, fontSize));
@@ -207,6 +220,14 @@ public class PublishPane extends JPanel {
               createLogFile("jekyll");
             }
           };
+          jekyllWorker.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+              if ("progress".equals(evt.getPropertyName())) {
+                jpb.setValue((Integer) evt.getNewValue());
+                label.setText(evt.getNewValue()+"%");
+              }
+            }
+          });
           jekyllWorker.execute();
           jekyllServeButton.setEnabled(false);
         } catch (Exception e1) {
@@ -244,7 +265,8 @@ public class PublishPane extends JPanel {
                   str = "127.0.0.1:4000" + str;
                   cmd = "cmd /c wkhtmltopdf " + str + " " + savePath;
                 } else {
-                  cmd = "cmd /c wkhtmltopdf " + nodeobj.getPath() + " " + savePath;
+                  cmd = "cmd /c wkhtmltopdf " + nodeobj.getPath() + " "
+                      + savePath;
                 }
                 cmds.add(cmd);
                 logArea.append("执行生成pdf命令：" + cmd + "\n");
@@ -252,6 +274,7 @@ public class PublishPane extends JPanel {
               }
             }
             btnHtmlToPdf.setEnabled(false);
+
             CmdWorker pdfWorker = new CmdWorker(cmds, null, logArea) {
 
               @Override
@@ -266,7 +289,16 @@ public class PublishPane extends JPanel {
                 createLogFile("pdf");
               }
             };
+            pdfWorker.addPropertyChangeListener(new PropertyChangeListener() {
+              public void propertyChange(PropertyChangeEvent evt) {
+                if ("progress".equals(evt.getPropertyName())) {
+                  jpb.setValue((Integer) evt.getNewValue());
+                  label.setText(evt.getNewValue()+"%");
+                }
+              }
+            });
             pdfWorker.execute();
+
           } catch (Exception exception) {
             btnHtmlToPdf.setEnabled(true);
             exception.printStackTrace();
@@ -549,7 +581,8 @@ public class PublishPane extends JPanel {
           new Paragraph(new Text("目录")).setTextAlignment(TextAlignment.CENTER));
 
       for (NodeObj node : nodes) {
-        PdfDocument sourcePdf = new PdfDocument(new PdfReader(node.getPath()));
+        final PdfDocument sourcePdf = new PdfDocument(
+            new PdfReader(node.getPath()));
 
         Paragraph p = new Paragraph();
         p.addTabStops(new TabStop(540, TabAlignment.RIGHT, new DottedLine()));
@@ -565,8 +598,9 @@ public class PublishPane extends JPanel {
       e.printStackTrace();
       return 0;
     } finally {
-      if (tocPdf != null)
+      if (tocPdf != null) {
         tocPdf.close();
+      }
     }
   }
 

@@ -135,6 +135,7 @@ public class PublishPane extends JPanel {
           comboBoxSelectIndex = comboBox.getSelectedIndex();
           // 生成树形图
           createTree(comboBoxSelectIndex);
+          chckbxSelectAll.setSelected(false);
           System.out.println(comboBoxSelectIndex);
         }
       }
@@ -477,28 +478,20 @@ public class PublishPane extends JPanel {
   }
 
   class CheckBoxSelectAllListener extends MouseAdapter {
-    List<NodeObj> list;
-
     /**
      * 鼠标点击监听器.
      */
     @Override
     public void mouseClicked(MouseEvent event) {
-      // JTree tree = (JTree) event.getSource();
-      // 点击后改变复选框状态
-      list = new ArrayList<NodeObj>();
       // 获得根节点
       CheckBoxTreeNode root = (CheckBoxTreeNode) tree
           .getPathForRow(tree.getRowForLocation(0, 0)).getLastPathComponent();
-
       if (root == null) {
         return;
       }
-      // 遍历所有节点，并获得已勾选节点
-      root.setSelected(!root.isSelected, R.SUBNODES_AND_PARENT);
+      // 更改全部节点状态
+      root.setSelected(chckbxSelectAll.isSelected(), R.SUBNODES_AND_PARENT);
       ((DefaultTreeModel) tree.getModel()).nodeStructureChanged(root);
-      // 遍历所有节点，并获得已勾选节点
-      getSelectedNodes(root, list);
     }
   }
 

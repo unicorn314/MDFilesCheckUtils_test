@@ -22,16 +22,15 @@ import src.Main;
  */
 public class CmdProcesser {
   
-  public static void main(final String[] args) { // java程序的主入口处
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        new Main();
-      }
-    });
+  /**
+   * 测试.
+   * @param args 参数
+   */
+  public static void main(final String[] args) { 
   }
 
-  protected List<String> exec(String cmd,File dir) throws IOException, InterruptedException{
+  protected List<String> exec(String cmd, File dir)
+      throws IOException, InterruptedException {
     List<String> result = new ArrayList<String>();
     Process process = null;
     BufferedReader bufrIn = null;

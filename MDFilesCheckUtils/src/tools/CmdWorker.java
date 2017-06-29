@@ -26,7 +26,7 @@ public abstract class CmdWorker extends SwingWorker<List<String>, String> {
   /**
    * cmd后台线程构造函数.
    * 
-   * @param cmd
+   * @param cmds
    *          cmd命令
    * @param dir
    *          执行命令文件夹

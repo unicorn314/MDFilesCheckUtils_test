@@ -1,9 +1,12 @@
 package tools;
 
+import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +40,8 @@ public class TitleChecker {
     int titleLineNum = 0; // 已读取到的title标识线"---"行的数量
     int titleContentNum = 0; // 已读取到的title内容"key: value"行的数量
     try {
-      lineReader = new LineNumberReader(new FileReader(file));
+      lineReader = new LineNumberReader(new BufferedReader(
+          new InputStreamReader(new FileInputStream(file), "UTF-8"))); 
       String readLine = null;
       while ((readLine = lineReader.readLine()) != null) {
         // 从文件第一行开始读取，直到最后一行

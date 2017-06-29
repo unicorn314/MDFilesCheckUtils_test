@@ -1,8 +1,11 @@
 package tools;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -92,7 +95,8 @@ public class HttpLinkChecker {
     // 行读取
     LineNumberReader lineReader = null;
     try {
-      lineReader = new LineNumberReader(new FileReader(file));
+      lineReader = new LineNumberReader(new BufferedReader(
+          new InputStreamReader(new FileInputStream(file), "UTF-8")));
       String readLine = null;
       while ((readLine = lineReader.readLine()) != null) { // 读取文件内容
         Matcher matcher = pattern.matcher(readLine);

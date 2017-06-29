@@ -102,6 +102,7 @@ public class ListYamlReadUtils {
     List<Section> sections = new ArrayList<Section>();
     // 遍历集合中所有的Object，全部转为Section
     for (Object obj : jsonObjectList) {
+      
       JSONObject jsonObject = JSONObject.fromObject(obj);
       Section section = (Section) JSONObject.toBean(jsonObject, Section.class);
       // 如果转换为Section后，内部的section属性不为空，则说明还有子级菜单

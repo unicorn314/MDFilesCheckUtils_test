@@ -1,5 +1,26 @@
 package src;
 
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.action.PdfAction;
+import com.itextpdf.kernel.pdf.canvas.draw.DottedLine;
+import com.itextpdf.kernel.utils.PdfMerger;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Tab;
+import com.itextpdf.layout.element.TabStop;
+import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.TabAlignment;
+import com.itextpdf.layout.property.TextAlignment;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -34,28 +55,6 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
-
-import com.itextpdf.io.font.FontConstants;
-import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.kernel.font.PdfFontFactory;
-import com.itextpdf.kernel.pdf.PdfArray;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfNumber;
-import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.pdf.action.PdfAction;
-import com.itextpdf.kernel.pdf.canvas.draw.DottedLine;
-import com.itextpdf.kernel.utils.PdfMerger;
-import com.itextpdf.layout.Document;
-import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.element.Tab;
-import com.itextpdf.layout.element.TabStop;
-import com.itextpdf.layout.element.Text;
-import com.itextpdf.layout.property.Property;
-import com.itextpdf.layout.property.TabAlignment;
-import com.itextpdf.layout.property.TextAlignment;
 
 import model.ListYml;
 import model.NodeObj;
@@ -507,19 +506,20 @@ public class PublishPane extends JPanel {
 
       PdfDocument pdf = new PdfDocument(new PdfWriter(destPdf));
       Document document = new Document(pdf);
-      PdfFont font = PdfFontFactory.createFont("STSong-Light", "UniGB-UCS2-H", false);
+      PdfFont font = PdfFontFactory.createFont("STSong-Light", "UniGB-UCS2-H",
+          false);
       document.setFont(font);
-      document.add(new Paragraph(new Text("目录"))
-          .setTextAlignment(TextAlignment.CENTER));
+      document.add(
+          new Paragraph(new Text("目录")).setTextAlignment(TextAlignment.CENTER));
       PdfMerger merger = new PdfMerger(pdf);
-      int index =2;
+      int index = 2;
       for (NodeObj node : nodes) {
         PdfDocument sourcePdf = new PdfDocument(new PdfReader(node.getPath()));
         PdfMerger pdfMerger = merger.merge(sourcePdf, 1,
             sourcePdf.getNumberOfPages());
 
         PdfPage page = pdf.getPage(index);
-        String destinationKey = "p" + (pdf.getNumberOfPages() - 1);
+        final String destinationKey = "p" + (pdf.getNumberOfPages() - 1);
         PdfArray destinationArray = new PdfArray();
         destinationArray.add(page.getPdfObject());
         destinationArray.add(PdfName.XYZ);
@@ -527,7 +527,7 @@ public class PublishPane extends JPanel {
         destinationArray.add(new PdfNumber(page.getMediaBox().getHeight()));
         destinationArray.add(new PdfNumber(1));
         pdf.addNamedDestination(destinationKey, destinationArray);
-        
+
         Paragraph p = new Paragraph();
         p.addTabStops(new TabStop(540, TabAlignment.RIGHT, new DottedLine()));
         p.add(node.getName());
@@ -536,7 +536,7 @@ public class PublishPane extends JPanel {
         p.setProperty(Property.ACTION, PdfAction.createGoTo(destinationKey));
         document.add(p);
 
-        index+=sourcePdf.getNumberOfPages();
+        index += sourcePdf.getNumberOfPages();
         sourcePdf.close();
       }
       pdf.close();

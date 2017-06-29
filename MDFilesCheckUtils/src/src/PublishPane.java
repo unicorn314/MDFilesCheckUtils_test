@@ -1,5 +1,10 @@
 package src;
 
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.utils.PdfMerger;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -13,11 +18,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.InputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,16 +36,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTree;
-import javax.swing.SwingWorker;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
-
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.utils.PdfMerger;
-import com.itextpdf.layout.Document;
 
 import model.ListYml;
 import model.NodeObj;
@@ -176,6 +175,7 @@ public class PublishPane extends JPanel {
         }
 
         try {
+          logArea.setText("");
           List<String> cmds = new ArrayList<>();
           cmds.add("cmd /c bundle exec jekyll serve");
           CmdWorker jekyllWorker = new CmdWorker(cmds, new File(rootFolderPath),
@@ -183,9 +183,12 @@ public class PublishPane extends JPanel {
 
             @Override
             protected void finished() {
+              jekyllServeButton.setEnabled(true);
+              createLogFile("jekyll");
             }
           };
           jekyllWorker.execute();
+          jekyllServeButton.setEnabled(false);
         } catch (Exception e1) {
           e1.printStackTrace();
         }
@@ -203,31 +206,8 @@ public class PublishPane extends JPanel {
                 .getLastPathComponent();
             // 获得所有已勾选节点
             getSelectedNodes(root, list);
-            // String createPdf = "wkhtmltopdf toc ";
-            // for (NodeObj nodeobj : list) {
-            // if (nodeobj.getPath() != null && !nodeobj.toString().equals(""))
-            // {
-            // String str = nodeobj.getPath().replace(rootFolderPath, "")
-            // .replace("\\", "/").replace(".md", ".html");
-            // str = "127.0.0.1:4000" + str;
-            // createPdf = createPdf + str + " ";
-            // }
-            // }
-            // // pdf文件名加上时间戳
-            // String savePath = System.getProperty("user.dir") + "\\htmlToPdf"
-            // + System.currentTimeMillis() + ".pdf";
-            // createPdf = createPdf + " " + savePath;
-            //
-            // System.out.println(createPdf);
-            //
-            // logArea.append(
-            // "------------------------生成pdf------------------------\n");
-            // logArea.append("执行生成pdf命令：" + createPdf + "\n");
-            // logArea.append("文件路径：" + savePath + "\n");
-            // CmdWorker pdfWorker = new CmdWorker("cmd /c " + createPdf, null,
-            // logArea);
-            // pdfWorker.execute();
 
+            logArea.setText("");
             logArea.append(
                 "------------------------生成pdf------------------------\n");
             List<String> cmds = new ArrayList<>();
@@ -237,7 +217,7 @@ public class PublishPane extends JPanel {
                 String str = nodeobj.getPath().replace(rootFolderPath, "")
                     .replace("\\", "/").replace(".md", ".html");
                 str = "127.0.0.1:4000" + str;
-                
+
                 String savePath = System.getProperty("user.dir")
                     + "\\pdfs\\htmlToPdf" + UUID.randomUUID() + ".pdf";
                 String cmd = "cmd /c wkhtmltopdf " + str + " " + savePath;
@@ -252,12 +232,13 @@ public class PublishPane extends JPanel {
               @Override
               protected void finished() {
                 btnHtmlToPdf.setEnabled(true);
-                String destPdf = System.getProperty("user.dir")
-                    + "\\htmlToPdf" + System.currentTimeMillis()+ ".pdf";
+                String destPdf = System.getProperty("user.dir") + "\\htmlToPdf"
+                    + System.currentTimeMillis() + ".pdf";
                 logArea.append("--------合并pdf开始--------\n");
                 logArea.append("合并pdf文件路径：" + destPdf + "\n");
-                mergePdf(sourcePaths,destPdf);
+                mergePdf(sourcePaths, destPdf);
                 logArea.append("--------合并pdf结束--------\n");
+                createLogFile("pdf");
               }
             };
             pdfWorker.execute();
@@ -512,4 +493,30 @@ public class PublishPane extends JPanel {
       e.printStackTrace();
     }
   }
+
+  /**
+   * 生成日志文件.
+   */
+  private void createLogFile(String logName) {
+    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+    String logPath = System.getProperty("user.dir") + "\\logs\\" + logName
+        + formatter.format(new Date()) + ".log";
+    OutputStream out = null;
+    try {
+      out = new FileOutputStream(new File(logPath), false);
+      out.write(logArea.getText().getBytes("utf-8"));
+      out.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    } finally {
+      try {
+        if (out != null) {
+          out.close();
+        }
+      } catch (final IOException ioe) {
+        // ignore
+      }
+    }
+  }
+
 }

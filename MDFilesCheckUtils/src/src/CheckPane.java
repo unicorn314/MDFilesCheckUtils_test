@@ -50,7 +50,7 @@ public class CheckPane extends JPanel {
    */
   private String rootFolderPath;
   // 开始检测按钮
-  final JButton checkButton = new JButton("start check");
+  final JButton checkButton = new JButton("start checking");
   // 浏览日志按钮
   final JButton logButton = new JButton("browse log");
 
@@ -136,7 +136,8 @@ public class CheckPane extends JPanel {
 
             if (!Desktop.isDesktopSupported()) {
               // 测试当前平台是否支持此类
-              JOptionPane.showMessageDialog(null, "浏览器设置不支持，请手动打开链接：" + logPath);
+              JOptionPane.showMessageDialog(null,
+                  "浏览器设置不支持，请手动打开链接：" + logPath);
               return;
             }
             // 用来打开系统默认浏览器浏览指定的URL
@@ -156,6 +157,7 @@ public class CheckPane extends JPanel {
 
     // 主窗口south部分（底部按钮及进度条）
     JPanel southPanel = new JPanel(new FlowLayout());
+    southPanel.add(new JLabel("进度"));
     southPanel.add(jpb);
     southPanel.add(label);
     add(southPanel, BorderLayout.SOUTH);
@@ -283,7 +285,8 @@ public class CheckPane extends JPanel {
         Matcher matcher = pattern.matcher(readLine);
         while (matcher.find()) { // 假如这一行存在可以匹配include标签正则表达式的字符串
           // 将路径字符串从include标签字符串中切割出来
-          String includePath = matcher.group(0).replaceAll("\\{%[\\s]+include[\\s]+", "")
+          String includePath = matcher.group(0)
+              .replaceAll("\\{%[\\s]+include[\\s]+", "")
               .replaceAll("[\\s]+%\\}", "");
 
           // 检测路径是否可用
@@ -327,7 +330,8 @@ public class CheckPane extends JPanel {
    * @throws IOException
    *           IO错误
    */
-  public void checkCharset(final File file) throws FileNotFoundException, IOException {
+  public void checkCharset(final File file)
+      throws FileNotFoundException, IOException {
     String charset = new FileCharsetDetector().guessFileEncoding(file);
     if (!charset.equals("UTF-8")) {
       MyUrl myUrl = new MyUrl();
@@ -363,18 +367,18 @@ public class CheckPane extends JPanel {
   private void htmlFormat(String msg, String tab) {
     resultStr.append("<" + tab + ">" + msg + "</" + tab + ">");
   }
-  
+
   private void htmlFormat(String msg) {
     resultStr.append(msg);
   }
-
 
   private void htmlWrapper(String content) {
     resultStr = new StringBuilder();
     resultStr.append("<!DOCTYPE HTML>");
     resultStr.append("<html>");
     resultStr.append("<head>");
-    resultStr.append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />");
+    resultStr.append(
+        "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />");
     resultStr.append("</head>");
     resultStr.append("<body>");
     resultStr.append(content);
@@ -450,12 +454,13 @@ public class CheckPane extends JPanel {
           searchWrongIncludePath(file, rootPath);
           checkCharset(file);
           searchWrongTitle(file);
-          List<MyUrl> wrongIntercalPath = wrongPathChecker.searchWrongIntercalPath(file);
+          List<MyUrl> wrongIntercalPath = wrongPathChecker
+              .searchWrongIntercalPath(file);
           wrongInternalPathList.addAll(wrongIntercalPath);
           jpb.setValue(100 * (i + 1) / result.size());
           // 用于监听器取值
           // setProgress(100 * (i+1) / result.size());
-          label.setText((i + 1) + " / " + result.size());
+          label.setText(100 * (i + 1) / result.size() + "%");
         } catch (FileNotFoundException e) {
           e.printStackTrace();
         } catch (IOException e) {
@@ -550,8 +555,8 @@ public class CheckPane extends JPanel {
       htmlFormat(msg, "h2");
       textArea.append(msg + "\r\n");
       msg = "处理建议：请修改为正确的格式。格式要求如下：\r\n" + "1.起始和结束的短横线都应为3个，不能多不能少，也不能有空格。\r\n"
-          + "2.中间内容部分应为键值对格式，key和value中间用英文格式冒号后紧跟一个英文空格隔开。\r\n" + "正确实例如下：\r\n" + "---\r\n"
-          + "title: this is title\r\n" + "---\r\n";
+          + "2.中间内容部分应为键值对格式，key和value中间用英文格式冒号后紧跟一个英文空格隔开。\r\n" + "正确实例如下：\r\n"
+          + "---\r\n" + "title: this is title\r\n" + "---\r\n";
       textArea.append(msg + "\r\n");
       htmlFormat(msg.replace("\r\n", "<br />"), "h4");
 
@@ -566,8 +571,10 @@ public class CheckPane extends JPanel {
 
       // 将结果保存到日志文件中
       try {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-        String logRelativePath = "MDFilesCheckLog" + formatter.format(new Date()) + ".html";
+        SimpleDateFormat formatter = new SimpleDateFormat(
+            "yyyy-MM-dd-HH-mm-ss");
+        String logRelativePath = "MDFilesCheckLog"
+            + formatter.format(new Date()) + ".html";
 
         File logFile = new File(logRelativePath);
         PrintStream mytxt = new PrintStream(logFile, "UTF-8");

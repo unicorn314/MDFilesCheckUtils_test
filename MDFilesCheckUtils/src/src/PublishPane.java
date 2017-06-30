@@ -156,6 +156,7 @@ public class PublishPane extends JPanel {
 
     // 主窗口south部分（底部按钮及进度条）
     JPanel southPanel = new JPanel(new FlowLayout());
+    southPanel.add(new JLabel("进度"));
     southPanel.add(jpb);
     southPanel.add(label);
     add(southPanel, BorderLayout.SOUTH);

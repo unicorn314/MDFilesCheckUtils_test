@@ -41,7 +41,7 @@ public class Main {
   JPanel centerPanel = new JPanel();
 
   // 文件选择按钮
-  final JButton selectFileButton = new JButton("select file");
+  final JButton selectFileButton = new JButton("select files");
 
   private CheckPane checkPane;
 

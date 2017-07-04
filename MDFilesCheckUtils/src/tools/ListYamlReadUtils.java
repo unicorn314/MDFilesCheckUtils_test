@@ -132,6 +132,7 @@ public class ListYamlReadUtils {
     // 遍历Section集合
     for (Section section : toc) {
       if (section.getPath() != null) {
+        // 判断path是外部链接还是内部页面路径
         if (!httpLinkChecker.isHttpLink(section.getPath())) {
           // 如果有path，将相对路径改为绝对路径
           String abPath = rootPath + section.getPath().replace("/", "\\");

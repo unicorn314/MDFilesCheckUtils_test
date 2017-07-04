@@ -23,7 +23,11 @@ public class FileUtils {
       List<File> result = new ArrayList<File>(); // 声明一个集合
       for (int i = 0; i < subFolders.length; i++) { // 循环显示文件夹或文件
         if (subFolders[i].isFile()) { // 如果是文件,加入列表
-          result.add(subFolders[i]);
+          if (subFolders[i].getName().toLowerCase().endsWith(".md")
+              || subFolders[i].getName().toLowerCase().endsWith(".yml")) {
+            // 如果是.md或者.yml文件，则将结果加入列表，否则不做处理
+            result.add(subFolders[i]);
+          }
         } else { // 如果是文件夹，则递归调用本方法，然后把所有的文件加到结果列表中
           List<File> foldResult = searchFile(subFolders[i]);
           // 循环显示文件

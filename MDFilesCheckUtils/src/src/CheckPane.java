@@ -9,9 +9,7 @@ import java.awt.event.ActionListener;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.LineNumberReader;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -20,8 +18,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -30,11 +26,11 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import model.MyUrl;
 import tools.HttpLinkChecker;
+import tools.IncludePathChecker;
 import tools.TitleChecker;
 import tools.WrongPathChecker;
 
@@ -227,31 +223,6 @@ public class CheckPane extends JPanel {
   }
 
   /**
-   * 判断include标签中的引用路径是否有效.
-   * 
-   * @param rootPath
-   *          项目根路径
-   * @param strPath
-   *          引用路径
-   * @return 返回true或者false
-   */
-  public boolean isValidPath(final String rootPath, final String strPath) {
-    String include;
-    Pattern pattern = Pattern.compile("/$");
-    Matcher matcher = pattern.matcher(rootPath);
-    if (matcher.find()) {
-      include = "_include/";
-    } else {
-      include = "/_include/";
-    }
-    File folder = new File(rootPath + include + strPath);
-    if (folder.exists()) {
-      return true;
-    }
-    return false;
-  }
-
-  /**
    * 在文件中搜索失效链接.
    * 
    * @param file
@@ -271,39 +242,9 @@ public class CheckPane extends JPanel {
    *          项目根路径
    */
   public void searchWrongIncludePath(final File file, final String rootPath) {
-    // include正则判断
-    String rex = "\\{%[\\s]+include[\\s]+[/]?" + "[a-zA-z0-9\\/\\.]*[\\s]+%\\}";
-    Pattern pattern = Pattern.compile(rex);
-
-    LineNumberReader lineReader = null;
-    try {
-      lineReader = new LineNumberReader(new FileReader(file));
-      String readLine = null;
-
-      // 读取文件内容
-      while ((readLine = lineReader.readLine()) != null) {
-        Matcher matcher = pattern.matcher(readLine);
-        while (matcher.find()) { // 假如这一行存在可以匹配include标签正则表达式的字符串
-          // 将路径字符串从include标签字符串中切割出来
-          String includePath = matcher.group(0)
-              .replaceAll("\\{%[\\s]+include[\\s]+", "")
-              .replaceAll("[\\s]+%\\}", "");
-
-          // 检测路径是否可用
-          if (!isValidPath(rootPath, includePath.trim())) {
-            MyUrl myUrl = new MyUrl();
-            myUrl.setFile(file.getParent() + "\\" + file.getName());
-            myUrl.setUrl(includePath);
-            // 若路径不可用，将这个网址所属的文件名和网址字符串插入到错误路径list
-            wrongIncludePathList.add(myUrl);
-          }
-        }
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    } finally {
-      // 关闭流
-      close(lineReader);
+    IncludePathChecker checker = new IncludePathChecker();
+    if (checker.searchWrongIncludePath(file, rootPath) != null) {
+      wrongIncludePathList.addAll(checker.searchWrongIncludePath(file, rootPath));
     }
   }
 
@@ -341,28 +282,6 @@ public class CheckPane extends JPanel {
       wrongCharsetFile.add(myUrl);
     }
   }
-
-  /**
-   * 关闭流.
-   * 
-   * @param able
-   *          需要关闭的流
-   */
-  private void close(final Closeable able) {
-    if (able != null) {
-      try {
-        able.close();
-      } catch (IOException e) {
-        e.printStackTrace();
-        // able = null;
-      }
-    }
-  }
-
-  // private void writeMsg(String msg) {
-  // resultStr.append(msg);
-  // textArea.append(msg);
-  // }
 
   private void htmlFormat(String msg, String tab) {
     resultStr.append("<" + tab + ">" + msg + "</" + tab + ">");
@@ -500,11 +419,6 @@ public class CheckPane extends JPanel {
 
       for (MyUrl myUrl : wrongIncludePathList) {
         String url = myUrl.getUrl();
-        try {
-          url = new String(url.getBytes(), "utf-8");
-        } catch (UnsupportedEncodingException e) {
-          e.printStackTrace();
-        }
         msg = "文件路径：" + myUrl.getFile() + "        引用路径：" + url;
         htmlFormat(msg, "p");
       }
@@ -520,11 +434,6 @@ public class CheckPane extends JPanel {
 
       for (MyUrl myUrl : wrongInternalPathList) {
         String url = myUrl.getUrl();
-        try {
-          url = new String(url.getBytes(), "utf-8");
-        } catch (UnsupportedEncodingException e) {
-          e.printStackTrace();
-        }
         msg = "文件路径：" + myUrl.getFile() + "        引用路径：" + url;
         htmlFormat(msg, "p");
       }
@@ -540,11 +449,6 @@ public class CheckPane extends JPanel {
 
       for (MyUrl myUrl : wrongCharsetFile) {
         String url = myUrl.getUrl();
-        try {
-          url = new String(url.getBytes(), "utf-8");
-        } catch (UnsupportedEncodingException e) {
-          e.printStackTrace();
-        }
         msg = "文件路径：" + myUrl.getFile() + "        编码格式：" + url;
         htmlFormat(msg, "p");
       }

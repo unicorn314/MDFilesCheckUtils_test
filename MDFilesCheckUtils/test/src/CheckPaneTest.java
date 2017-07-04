@@ -63,26 +63,6 @@ public class CheckPaneTest {
    * .
    */
   @Test
-  public void testIsValidPath_ture() {
-    String rootPath = "utestfiles";
-    String strPath = "JUnitTest.md";
-    assertThat(check.isValidPath(rootPath, strPath), is(true));
-  }
-
-  /**
-   * .
-   */
-  @Test
-  public void testIsValidPath_false() {
-    String rootPath = "utestfiles";
-    String strPath = "templates/home.md";
-    assertThat(check.isValidPath(rootPath, strPath), is(false));
-  }
-
-  /**
-   * .
-   */
-  @Test
   public void testSearchBadUrlTrue() {
     check.searchBadUrl(new File("utestfiles/_include/JUnitTest.md"));
     if (check.getBadUrlList().size() == 1) {

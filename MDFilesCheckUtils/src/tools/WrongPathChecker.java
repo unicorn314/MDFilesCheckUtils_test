@@ -73,59 +73,6 @@ public class WrongPathChecker {
   }
 
   /**
-   * 在文件中搜索include标签中错误的引用文件路径.
-   * 
-   * @param file
-   *          需要检测的文件
-   * @param rootPath
-   *          项目根路径
-   */
-  public List<MyUrl> searchWrongIcludePath(final File file,
-      final String rootPath) {
-    List<MyUrl> wrongIncludePathList = new ArrayList<MyUrl>();
-    // include正则判断
-    String rex = "\\{%[\\s]+include[\\s]+[/]?" + "[a-zA-z0-9\\/\\.]*[\\s]+%\\}";
-    Pattern pattern = Pattern.compile(rex);
-
-    LineNumberReader lineReader = null;
-
-    try {
-      InputStreamReader isr = new InputStreamReader(new FileInputStream(file),
-          new FileCharsetDetector().guessFileEncoding(file));
-      BufferedReader bufferedReader = new BufferedReader(isr);
-      // line = read.readLine();
-      lineReader = new LineNumberReader(new FileReader(file));
-      String readLine = null;
-
-      // 读取文件内容
-      while ((readLine = bufferedReader.readLine()) != null) {
-        Matcher matcher = pattern.matcher(readLine);
-        while (matcher.find()) { // 假如这一行存在可以匹配include标签正则表达式的字符串
-          // 将路径字符串从include标签字符串中切割出来
-          String includePath = matcher.group(0)
-              .replaceAll("\\{%[\\s]+include[\\s]+", "")
-              .replaceAll("[\\s]+%\\}", "");
-
-          // 检测路径是否可用
-          if (!isValidIncludePath(rootPath, includePath.trim())) {
-            MyUrl myUrl = new MyUrl();
-            myUrl.setFile(file.getParent() + "\\" + file.getName());
-            myUrl.setUrl(includePath);
-            // 若路径不可用，将这个网址所属的文件名和网址字符串插入到错误路径list
-            wrongIncludePathList.add(myUrl);
-          }
-        }
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    } finally {
-      // 关闭流
-      close(lineReader);
-    }
-    return wrongIncludePathList;
-  }
-
-  /**
    * 在文件中搜索引用超链接中的错误路径.
    * 
    * @param file
@@ -146,6 +93,8 @@ public class WrongPathChecker {
     Pattern anchorPattern = Pattern.compile(anchorRex);
     LineNumberReader lineReader = null;
     try {
+//      lineReader = new LineNumberReader(new FileReader(file));
+      // 读取文件时指定字符编码
       lineReader = new LineNumberReader(new BufferedReader(
           new InputStreamReader(new FileInputStream(file), "UTF-8")));
       String readLine = null;

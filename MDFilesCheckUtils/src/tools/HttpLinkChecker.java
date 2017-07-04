@@ -23,9 +23,7 @@ import model.MyUrl;
  */
 public class HttpLinkChecker {
   // 网址的正则表达式
-  private final String httpRex = "(http://|ftp://|https://)"
-      + "[^\\s\"\'\\()]*?\\."
-      + "(com|net|cn|me|tw|fr|edu)[^\\s\"\'\\()]*";
+  private final String httpRex = "(http://|https://)(([a-zA-z0-9]|-){1,}\\.){1,}[a-zA-z0-9]{1,}-*";
 
   /**
    * 判断字符串是否为网址.

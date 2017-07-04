@@ -580,7 +580,7 @@ public class CheckPane extends JPanel {
         PrintStream mytxt = new PrintStream(logFile, "UTF-8");
         PrintStream out = System.out;
         System.setOut(mytxt);
-        String logContent = new String(resultStr.toString().getBytes("UTF-8"));
+        String logContent = new String(resultStr.toString());
         System.out.println(logContent);
         System.setOut(out);
         System.out.println("日志保存完毕。");

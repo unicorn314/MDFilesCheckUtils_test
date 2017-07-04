@@ -93,7 +93,6 @@ public class WrongPathChecker {
     Pattern anchorPattern = Pattern.compile(anchorRex);
     LineNumberReader lineReader = null;
     try {
-//      lineReader = new LineNumberReader(new FileReader(file));
       // 读取文件时指定字符编码
       lineReader = new LineNumberReader(new BufferedReader(
           new InputStreamReader(new FileInputStream(file), "UTF-8")));
